@@ -3,14 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur de Nation & Mode Tournoi</title>
+    <title>Générateur de Nation & Tournoi de Guerre</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             background-color: #0b0b0d;
             color: #fffffe;
@@ -18,314 +13,329 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 100vh;
             padding: 20px;
+            min-height: 100vh;
         }
 
         .card {
             background-color: #16161a;
             border-radius: 16px;
-            padding: 24px;
-            max-width: 480px;
+            padding: 20px;
+            max-width: 500px;
             width: 100%;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             text-align: center;
             border: 1px solid #242429;
-        }
-
-        .mode-selector {
-            display: flex;
-            gap: 10px;
             margin-bottom: 20px;
         }
 
+        .mode-selector { display: flex; gap: 10px; margin-bottom: 15px; }
         .mode-btn {
-            flex: 1;
-            padding: 10px;
-            background: #242429;
-            border: 1px solid #333;
-            color: #94a1b2;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
+            flex: 1; padding: 10px; background: #242429; border: 1px solid #333;
+            color: #94a1b2; border-radius: 8px; cursor: pointer; font-weight: bold;
         }
+        .mode-btn.active { background: #7f5af0; color: white; border-color: #7f5af0; }
 
-        .mode-btn.active {
-            background: #7f5af0;
-            color: white;
-            border-color: #7f5af0;
+        /* Roue */
+        .wheel-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 15px auto;
+        }
+        #wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid #fffffe;
+            transition: transform 3s cubic-bezier(0.15, 0.99, 0.18, 1);
+        }
+        .pointer {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 20px solid #e63946;
+            z-index: 10;
         }
 
         #flag {
-            width: 100%;
-            height: 180px;
-            border-radius: 10px;
-            display: flex;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            overflow: hidden;
-            margin-bottom: 15px;
+            width: 100%; height: 120px; border-radius: 8px; display: flex;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4); overflow: hidden; margin-bottom: 15px;
             border: 1px solid #333;
         }
-
         .stripe-v { flex: 1; height: 100%; }
         .stripe-h { width: 100%; flex: 1; }
 
-        canvas#mapCanvas {
-            width: 100%;
-            height: 160px;
-            background-color: #0f172a;
-            border-radius: 8px;
-            border: 1px solid #334155;
-            margin-bottom: 15px;
-        }
-
         .grid-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; text-align: left;
         }
-
-        .info-group {
-            background: #242429;
-            padding: 10px;
-            border-radius: 8px;
-            text-align: left;
-        }
-
+        .info-group { background: #242429; padding: 8px 12px; border-radius: 6px; }
         .info-group.full { grid-column: span 2; }
+        .label { font-size: 0.65rem; color: #94a1b2; text-transform: uppercase; font-weight: 600; }
+        .value { font-size: 0.9rem; font-weight: bold; color: #fffffe; margin-top: 2px; }
 
-        .label {
-            font-size: 0.7rem;
-            color: #94a1b2;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            font-weight: 600;
+        button.btn-act {
+            background-color: #7f5af0; color: white; border: none; padding: 12px;
+            font-size: 1rem; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%;
         }
+        button.btn-act:disabled { background-color: #444; cursor: not-allowed; }
 
-        .value {
-            font-size: 0.95rem;
-            font-weight: bold;
-            color: #fffffe;
-            margin-top: 2px;
+        /* Style Tournoi */
+        .tournament-list { display: flex; flex-direction: column; gap: 10px; text-align: left; margin-bottom: 15px; }
+        .country-card { background: #242429; padding: 10px; border-radius: 8px; border-left: 4px solid #7f5af0; }
+        .log-box {
+            background: #000; color: #00ff66; font-family: monospace; padding: 10px;
+            border-radius: 8px; max-height: 200px; overflow-y: auto; text-align: left; font-size: 0.8rem;
         }
-
-        .actions {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .btn-primary {
-            background-color: #7f5af0;
-            color: white;
-            border: none;
-            padding: 12px;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .btn-auto {
-            background-color: #2cb67d;
-            color: white;
-            border: none;
-            padding: 12px;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <!-- Sélection du Mode -->
         <div class="mode-selector">
             <button id="btnModeNormal" class="mode-btn active" onclick="switchMode('normal')">Mode Normal</button>
             <button id="btnModeTournament" class="mode-btn" onclick="switchMode('tournament')">Mode Tournoi 🏆</button>
         </div>
 
-        <h1 id="titleDisplay">Générateur de Nation</h1>
-        
-        <!-- Drapeau -->
-        <div id="flag"></div>
-
-        <!-- Carte géographique -->
-        <div class="label" style="text-align: left; margin-bottom: 4px;">Carte du Territoire</div>
-        <canvas id="mapCanvas" width="400" height="160"></canvas>
-
-        <!-- Statistiques -->
-        <div class="grid-stats">
-            <div class="info-group full">
-                <div class="label">Nom du pays</div>
-                <div class="value" id="country-name">-</div>
-            </div>
-
-            <div class="info-group">
-                <div class="label">Superficie</div>
-                <div class="value" id="area">-</div>
-            </div>
-
-            <div class="info-group">
-                <div class="label">Population</div>
-                <div class="value" id="population">-</div>
-            </div>
-
-            <div class="info-group full">
-                <div class="label">Régime Politique</div>
-                <div class="value" id="regime">-</div>
-            </div>
-
-            <div class="info-group">
-                <div class="label">Capitale</div>
-                <div class="value" id="capital">-</div>
-            </div>
-
-            <div class="info-group">
-                <div class="label">Économie</div>
-                <div class="value" id="economy">-</div>
-            </div>
+        <!-- Roue -->
+        <div class="wheel-container">
+            <div class="pointer"></div>
+            <canvas id="wheel" width="200" height="200"></canvas>
         </div>
 
-        <!-- Actions Mode Normal -->
-        <div id="normalActions" class="actions">
-            <button class="btn-primary" onclick="generateNation()">Générer une Nation</button>
+        <!-- Interface Mode Normal -->
+        <div id="normalView">
+            <div id="flag"></div>
+            <div class="grid-stats">
+                <div class="info-group full"><div class="label">Nom du pays</div><div class="value" id="c-name">-</div></div>
+                <div class="info-group"><div class="label">Superficie</div><div class="value" id="c-area">-</div></div>
+                <div class="info-group"><div class="label">Population</div><div class="value" id="c-pop">-</div></div>
+                <div class="info-group"><div class="label">Parti Politique</div><div class="value" id="c-party">-</div></div>
+                <div class="info-group"><div class="label">Leader Historique</div><div class="value" id="c-leader">-</div></div>
+                <div class="info-group"><div class="label">IDH</div><div class="value" id="c-hdi">-</div></div>
+                <div class="info-group"><div class="label">PIB / hab.</div><div class="value" id="c-gdp">-</div></div>
+                <div class="info-group full"><div class="label">Culture</div><div class="value" id="c-culture">-</div></div>
+            </div>
+            <button id="btnSpin" class="btn-act" onclick="spinWheel()">Tourner la Roue !</button>
         </div>
 
-        <!-- Actions Mode Tournoi -->
-        <div id="tournamentActions" class="actions hidden">
-            <button class="btn-primary" onclick="generateNation()">Générer le Pays (Manuel)</button>
-            <button class="btn-auto" onclick="generateAutoNation()">⚡ Auto (Instant)</button>
+        <!-- Interface Mode Tournoi -->
+        <div id="tournamentView" class="hidden">
+            <button id="btnGenTournament" class="btn-act" style="margin-bottom: 15px;" onclick="startTournamentGen()">Générer les 5 Pays (Roue)</button>
+            <div id="tournamentCountries" class="tournament-list"></div>
+            <button id="btnWar" class="btn-act hidden" style="background-color: #e63946;" onclick="simulateWar()">Lancer la Guerre ! ⚔️</button>
+            <div id="warLogs" class="log-box hidden" style="margin-top: 15px;"></div>
         </div>
     </div>
 
     <script>
-        const prefixes = ["Val", "Ar", "Bel", "Kael", "Nov", "Zor", "Ond", "Eld", "Mar", "Sol", "Vanguard", "Aethel"];
-        const suffixes = ["ia", "is", "oria", "gard", "onia", "vane", "terra", "mire", "stan", "dor", "land"];
-        const regimes = ["République Démocratique", "Empire Céleste", "Royaume Fédéral", "Technocratie", "Confédération", "Principauté"];
-        const capitals = ["grad", "burg", "polis", "haven", "city", "spire", "reach"];
-        const economies = ["Agricole", "Industrialisée", "Haute Technologie", "Minière", "Commerciale"];
+        const prefixes = ["Val", "Ar", "Bel", "Kael", "Nov", "Zor", "Ond", "Eld", "Mar", "Sol"];
+        const suffixes = ["ia", "is", "oria", "gard", "onia", "vane", "terra", "mire", "stan", "dor"];
         const colors = ["#e63946", "#f1faee", "#a8dadc", "#457b9d", "#1d3557", "#2a9d8f", "#e9c46a", "#f4a261", "#9b5de5"];
 
-        let currentMode = 'normal';
+        // 8 Partis politiques réels avec leurs 8 leaders historiques
+        const politicalData = [
+            {
+                party: "Fascisme / Nazisme",
+                leaders: ["Adolf Hitler", "Benito Mussolini", "Philippe Pétain", "Francisco Franco", "Oswald Mosley", "Ante Pavelić", "Miklos Horthy", "Ion Antonescu"],
+                cultures: ["Nationalisme radical", "Militarisme", "Totalitarisme"]
+            },
+            {
+                party: "Communisme / Marxisme-Léninisme",
+                leaders: ["Vladimir Lénine", "Joseph Staline", "Mao Zedong", "Fidel Castro", "Ho Chi Minh", "Josip Broz Tito", "Enver Hoxha", "Thomas Sankara"],
+                cultures: ["Collectivisme", "Révolutionnaire", "Socialisme d'État"]
+            },
+            {
+                party: "Démocratie Libérale / Capitalisme",
+                leaders: ["Franklin D. Roosevelt", "Winston Churchill", "Charles de Gaulle", "John F. Kennedy", "Margaret Thatcher", "Ronald Reagan", "Konrad Adenauer", "Dwight D. Eisenhower"],
+                cultures: ["Liberté individuelle", "Libre-échange", "Parlementarisme"]
+            },
+            {
+                party: "Monarchie Absolue / Imperialisme",
+                leaders: ["Louis XIV", "Napoléon Ier", "Chaka Zoulou", "Alexandre le Grand", "Jules César", "Pierre le Grand", "Meiji", "Suleiman le Magnifique"],
+                cultures: ["Tradition dynastique", "Expansionnisme", "Féodalisme"]
+            },
+            {
+                party: "Social-Démocratie",
+                leaders: ["Olof Palme", "Clement Attlee", "Willy Brandt", "Jean Jaurès", "Léon Blum", "Sandro Pertini", "Michael Savage", "Nelson Mandela"],
+                cultures: ["État-providence", "Égalité sociale", "Syndicalisme"]
+            },
+            {
+                party: "Théocratie",
+                leaders: ["Ruhollah Khomeini", "Innocent III", "Girolamo Savonarole", "Taiping Hong Xiuquan", "Umar ibn al-Khattâb", "Ismail Ier", "Suleiman Ier", "Jan van Leiden"],
+                cultures: ["Loi religieuse", "Dévotion", "Tradition sacrée"]
+            },
+            {
+                party: "Anarchisme",
+                leaders: ["Nestor Makhno", "Pierre-Joseph Proudhon", "Mikhail Bakounine", "Piotr Kropotkine", "Louise Michel", "Buenaventura Durruti", "Emma Goldman", "Errico Malatesta"],
+                cultures: ["Autogestion", "Anti-autoritarisme", "Entraide"]
+            },
+            {
+                party: "Ecologisme / Conservatisme Vert",
+                leaders: "René Dumont,Petra Kelly,Wangari Maathai,Aldo Leopold,Petra De Sutter,Gro Harlem Brundtland,E. F. Schumacher,Anomalisa".split(','),
+                cultures: ["Décroissance", "Protection bioculturelle", "Éco-responsabilité"]
+            }
+        ];
 
-        function getRandomElement(arr) {
-            return arr[Math.floor(Math.random() * arr.length)];
+        let isSpinning = false;
+        let tournamentNations = [];
+
+        // Dessiner la roue
+        function drawWheel() {
+            const canvas = document.getElementById('wheel');
+            const ctx = canvas.getContext('2d');
+            const slice = (Math.PI * 2) / politicalData.length;
+            const wheelColors = ["#e63946", "#457b9d", "#2a9d8f", "#e9c46a", "#f4a261", "#9b5de5", "#2cb67d", "#7f5af0"];
+
+            for (let i = 0; i < politicalData.length; i++) {
+                ctx.beginPath();
+                ctx.fillStyle = wheelColors[i];
+                ctx.moveTo(100, 100);
+                ctx.arc(100, 100, 100, i * slice, (i + 1) * slice);
+                ctx.fill();
+            }
         }
+        drawWheel();
 
         function switchMode(mode) {
-            currentMode = mode;
             document.getElementById('btnModeNormal').classList.toggle('active', mode === 'normal');
             document.getElementById('btnModeTournament').classList.toggle('active', mode === 'tournament');
-            
-            document.getElementById('normalActions').classList.toggle('hidden', mode !== 'normal');
-            document.getElementById('tournamentActions').classList.toggle('hidden', mode !== 'tournament');
-            
-            document.getElementById('titleDisplay').innerText = mode === 'normal' ? "Générateur de Nation" : "Mode Tournoi 🏆";
-            generateNation();
+            document.getElementById('normalView').classList.toggle('hidden', mode !== 'normal');
+            document.getElementById('tournamentView').classList.toggle('hidden', mode !== 'tournament');
         }
 
-        function drawMap(areaKm) {
-            const canvas = document.getElementById('mapCanvas');
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Calcul du rayon de l'île sur la carte selon la superficie
-            // De 10 m² à 10 000 000 km²
-            let minArea = 10 / 1000000; // 10 m² en km²
-            let maxArea = 10000000;
+        function generateNationData() {
+            const name = prefixes[Math.floor(Math.random() * prefixes.length)] + suffixes[Math.floor(Math.random() * suffixes.length)];
             
-            let scale = Math.log10(areaKm + 1) / Math.log10(maxArea);
-            let radius = Math.max(8, scale * 65);
+            // Superficie : de 100 000 à 1 000 000 000 (+100 000)
+            const areaSteps = Math.floor(Math.random() * 9999) + 1;
+            const area = areaSteps * 100000;
 
-            // Dessin de l'eau
-            ctx.fillStyle = '#1e293b';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Population : de 100 000 à 1 000 000 000 (+100 000)
+            const popSteps = Math.floor(Math.random() * 9999) + 1;
+            const pop = popSteps * 100000;
 
-            // Dessin de l'île
-            ctx.beginPath();
-            let centerX = canvas.width / 2;
-            let centerY = canvas.height / 2;
+            // IDH : de 0.100 à 1.000 (+0.050)
+            const hdiSteps = Math.floor(Math.random() * 19); 
+            const hdi = (0.100 + (hdiSteps * 0.050)).toFixed(3);
 
-            for (let a = 0; a < Math.PI * 2; a += 0.2) {
-                let r = radius + (Math.sin(a * 4) * (radius * 0.2));
-                let x = centerX + r * Math.cos(a);
-                let y = centerY + r * Math.sin(a);
-                if (a === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
-            }
-            ctx.closePath();
-            ctx.fillStyle = '#22c55e';
-            ctx.fill();
-            ctx.strokeStyle = '#15803d';
-            ctx.lineWidth = 2;
-            ctx.stroke();
+            // PIB / hab : de $500 à $120 000
+            const gdp = Math.floor(Math.random() * 1195) * 100 + 500;
 
-            // Point Capitale
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, 3, 0, Math.PI * 2);
-            ctx.fillStyle = '#ef4444';
-            ctx.fill();
+            // Parti & Leader
+            const partyObj = politicalData[Math.floor(Math.random() * politicalData.length)];
+            const leader = partyObj.leaders[Math.floor(Math.random() * partyObj.leaders.length)];
+            const culture = partyObj.cultures[Math.floor(Math.random() * partyObj.cultures.length)];
+
+            return {
+                name, area, pop, hdi, gdp,
+                party: partyObj.party, leader, culture,
+                power: Math.floor((area / 1000000) + (pop / 1000000) + (gdp / 100) + (parseFloat(hdi) * 100))
+            };
         }
 
-        function formatArea(area) {
-            if (area < 1) {
-                return (area * 1000000).toFixed(0) + " m²";
-            }
-            return area.toLocaleString('fr-FR') + " km²";
-        }
-
-        function generateNation() {
-            const name = getRandomElement(prefixes) + getRandomElement(suffixes);
-            document.getElementById("country-name").innerText = name;
-            document.getElementById("regime").innerText = getRandomElement(regimes);
-            document.getElementById("capital").innerText = getRandomElement(prefixes) + getRandomElement(capitals);
-            document.getElementById("economy").innerText = getRandomElement(economies);
-
-            // Superficie aléatoire de 10 m² à 10,000,000 km²
-            let area;
-            if (Math.random() < 0.2) {
-                area = (Math.floor(Math.random() * 90) + 10) / 1000000; // Micro île (m²)
-            } else {
-                area = Math.floor(Math.random() * 9999000) + 1000; // Grand pays (km²)
-            }
-
-            document.getElementById("area").innerText = formatArea(area);
-
-            // Population proportionnelle
-            let pop = Math.floor(area * (Math.random() * 200 + 10));
-            document.getElementById("population").innerText = pop.toLocaleString('fr-FR') + " hab.";
-
-            // Dessin Drapeau
+        function drawFlag() {
             const flag = document.getElementById("flag");
             flag.innerHTML = "";
             const isVertical = Math.random() > 0.5;
             flag.style.flexDirection = isVertical ? "row" : "column";
-
             for (let i = 0; i < 3; i++) {
                 const stripe = document.createElement("div");
                 stripe.className = isVertical ? "stripe-v" : "stripe-h";
-                stripe.style.backgroundColor = getRandomElement(colors);
+                stripe.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 flag.appendChild(stripe);
             }
-
-            // Génération de la Carte
-            drawMap(area);
         }
 
-        function generateAutoNation() {
-            generateNation();
-            alert("⚡ Pays généré instantanément pour le tournoi !");
+        function spinWheel() {
+            if (isSpinning) return;
+            isSpinning = true;
+            document.getElementById('btnSpin').disabled = true;
+
+            const wheel = document.getElementById('wheel');
+            const randomRotation = 1440 + Math.floor(Math.random() * 360);
+            wheel.style.transform = `rotate(${randomRotation}deg)`;
+
+            setTimeout(() => {
+                const nation = generateNationData();
+                document.getElementById('c-name').innerText = nation.name;
+                document.getElementById('c-area').innerText = nation.area.toLocaleString('fr-FR') + " km²";
+                document.getElementById('c-pop').innerText = nation.pop.toLocaleString('fr-FR') + " hab.";
+                document.getElementById('c-party').innerText = nation.party;
+                document.getElementById('c-leader').innerText = nation.leader;
+                document.getElementById('c-hdi').innerText = nation.hdi;
+                document.getElementById('c-gdp').innerText = nation.gdp.toLocaleString('fr-FR') + " $";
+                document.getElementById('c-culture').innerText = nation.culture;
+
+                drawFlag();
+                wheel.style.transition = 'none';
+                wheel.style.transform = 'rotate(0deg)';
+                setTimeout(() => { wheel.style.transition = 'transform 3s cubic-bezier(0.15, 0.99, 0.18, 1)'; }, 50);
+
+                isSpinning = false;
+                document.getElementById('btnSpin').disabled = false;
+            }, 3000);
         }
 
-        // Lancement initial
-        generateNation();
+        // MODE TOURNOI
+        function startTournamentGen() {
+            tournamentNations = [];
+            const container = document.getElementById('tournamentCountries');
+            container.innerHTML = "";
+            
+            for (let i = 0; i < 5; i++) {
+                const n = generateNationData();
+                tournamentNations.push(n);
+                container.innerHTML += `
+                    <div class="country-card">
+                        <strong>${i+1}. ${n.name}</strong> (${n.party})<br>
+                        <small>Leader: ${n.leader} | Pop: ${(n.pop/1000000).toFixed(1)}M | Puissance: ${n.power}</small>
+                    </div>
+                `;
+            }
+            document.getElementById('btnWar').classList.remove('hidden');
+            document.getElementById('warLogs').classList.add('hidden');
+        }
+
+        function simulateWar() {
+            const logBox = document.getElementById('warLogs');
+            logBox.classList.remove('hidden');
+            logBox.innerHTML = "> DEBUT DU TOURNOI DE GUERRE<br>";
+
+            let fighters = [...tournamentNations];
+
+            let round = 1;
+            while (fighters.length > 1) {
+                logBox.innerHTML += `<br>--- TOUR ${round} ---<br>`;
+                let p1Index = Math.floor(Math.random() * fighters.length);
+                let p2Index;
+                do { p2Index = Math.floor(Math.random() * fighters.length); } while (p1Index === p2Index);
+
+                let p1 = fighters[p1Index];
+                let p2 = fighters[p2Index];
+
+                // Calcul du vainqueur basé sur la puissance + aléatoire
+                let score1 = p1.power * (Math.random() + 0.5);
+                let score2 = p2.power * (Math.random() + 0.5);
+
+                if (score1 >= score2) {
+                    logBox.innerHTML += `⚔️ ${p1.name} (dirigé par ${p1.leader}) écrase ${p2.name} !<br>`;
+                    fighters.splice(p2Index, 1);
+                } else {
+                    logBox.innerHTML += `⚔️ ${p2.name} (dirigé par ${p2.leader}) écrase ${p1.name} !<br>`;
+                    fighters.splice(p1Index, 1);
+                }
+                round++;
+            }
+
+            logBox.innerHTML += `<br>🏆 <strong>VICTOIRE FINALE : ${fighters[0].name} (Leader: ${fighters[0].leader}) domine le monde !</strong>`;
+        }
     </script>
 </body>
 </html>
+
