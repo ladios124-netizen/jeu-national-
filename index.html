@@ -127,7 +127,7 @@
         }
 
         canvas#flagCanvas {
-            width: 100%; height: 130px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); margin-bottom: 15px; border: 1px solid #333; background: #111;
+            width: 100%; height: 140px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); margin-bottom: 15px; border: 1px solid #333; background: #111;
         }
 
         .grid-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; text-align: left; }
@@ -165,8 +165,7 @@
             <div class="globe-container"><canvas id="globeCanvas" width="110" height="110"></canvas></div>
             <h1 class="welcome-title">WikiNation & Géopolitique</h1>
             <p class="welcome-desc">
-                Une application interactive conçue pour vous aider à <strong>apprendre l'histoire</strong> et la <strong>géopolitique</strong>.<br><br>
-                Générez ou créez vos nations, comparez leurs indicateurs aux vrais pays, et posez vos questions sur Wikipédia.
+                Une application interactive pour <strong>créer des nations</strong>, analyser leurs indicateurs géopolitiques et <strong>générer des drapeaux personnalisés style PolitiScales avec l'IA</strong>.
             </p>
             <button class="btn-start" onclick="launchApp()">🚀 Lancer</button>
         </div>
@@ -199,9 +198,6 @@
                 <select id="selectLang" class="select-custom" onchange="changeLanguage()">
                     <option value="fr">🇫🇷 FR</option>
                     <option value="en">🇬🇧 EN</option>
-                    <option value="ru">🇷🇺 RU</option>
-                    <option value="zh">🇨🇳 ZH</option>
-                    <option value="ja">🇯🇵 JA</option>
                 </select>
             </div>
         </div>
@@ -221,7 +217,7 @@
                 <div class="form-group full"><label>Nom de la Nation</label><input type="text" id="m-name" value="Néo-Eldoria" onchange="applyManualConfig()"></div>
                 <div class="form-group"><label>Superficie (km²)</label><input type="number" id="m-area" value="500000" onchange="applyManualConfig()"></div>
                 <div class="form-group"><label>Population</label><input type="number" id="m-pop" value="45000000" onchange="applyManualConfig()"></div>
-                <div class="form-group"><label>PIB / Habitant ($)</label><input type="number" id="m-gdp-cap" value="35000" onchange="applyManualConfig()"></div>
+                <div class="form-group"><label>PIB / Habitants ($)</label><input type="number" id="m-gdp-cap" value="35000" onchange="applyManualConfig()"></div>
                 <div class="form-group"><label>Armée (% Pop)</label><input type="number" step="0.1" id="m-army" value="0.5" onchange="applyManualConfig()"></div>
                 <div class="form-group"><label>IDH (0 à 1)</label><input type="number" step="0.01" id="m-hdi" value="0.850" onchange="applyManualConfig()"></div>
                 <div class="form-group">
@@ -229,10 +225,10 @@
                     <select id="m-party" onchange="applyManualConfig()"></select>
                 </div>
                 <div class="form-group"><label>Leader</label><input type="text" id="m-leader" value="Alexandre III" onchange="applyManualConfig()"></div>
-                <div class="form-group"><label>Culture / Idéologie</label><input type="text" id="m-culture" value="Tradition & Science" onchange="applyManualConfig()"></div>
+                <div class="form-group full"><label>Culture / Idéologie</label><input type="text" id="m-culture" value="Tradition & Science" onchange="applyManualConfig()"></div>
             </div>
 
-            <canvas id="flagCanvas" width="300" height="130"></canvas>
+            <canvas id="flagCanvas" width="400" height="200"></canvas>
 
             <div class="grid-stats">
                 <div class="info-group"><div class="label" id="lbl-area">Superficie</div><div class="value" id="c-area">-</div></div>
@@ -266,12 +262,12 @@
             </div>
 
             <div class="ia-box">
-                <div class="ia-title">🌐 WikiNation Assistant & Wikipédia</div>
+                <div class="ia-title">🌐 IA Designer & Wikipédia Assistant</div>
                 <div class="chat-logs" id="chatLogs">
-                    <div class="chat-msg ia">👋 Pose-moi une question sur ton pays ou recherche un sujet sur Wikipédia !</div>
+                    <div class="chat-msg ia">👋 Tapez <b>"drapeau"</b> pour qu'une IA dessine une bannière PolitiScales unique selon votre nation, ou posez vos questions géopolitiques !</div>
                 </div>
                 <div class="chat-input-group">
-                    <input type="text" id="chatInput" class="chat-input" placeholder="Rechercher sur Wikipédia..." onkeypress="if(event.key==='Enter') askIA()">
+                    <input type="text" id="chatInput" class="chat-input" placeholder="Demandez un drapeau PolitiScales ou recherchez..." onkeypress="if(event.key==='Enter') askIA()">
                     <button class="btn-act" style="flex:0; padding: 0 15px;" onclick="askIA()">💬</button>
                 </div>
             </div>
@@ -338,7 +334,7 @@
             setTimeout(() => { document.getElementById('mainApp').style.opacity = '1'; }, 300);
         }
 
-        // DONNÉES
+        // DONNÉES PAYS ET POLITIQUE
         const realCountriesData = {
             "France": { pop: 68000000, gdp: 3000000000000, army: 200000, area: 551000, hdi: 0.903 },
             "USA": { pop: 335000000, gdp: 25000000000000, army: 1390000, area: 9834000, hdi: 0.921 },
@@ -350,23 +346,21 @@
         };
 
         const politicalData = [
-            { party: "Fascisme", leaders: ["Adolf Hitler", "Benito Mussolini", "Francisco Franco"], culture: "Militarisme Radical", symbol: "fasces", bgColors: ["#800000", "#111111", "#dddddd"], histCountries: ["Allemagne Nazie", "Italie Fasciste"], currCountries: ["Corée du Nord", "Érythrée"] },
-            { party: "Communisme", leaders: ["Vladimir Lénine", "Joseph Staline", "Mao Zedong"], culture: "Collectivisme d'État", symbol: "hammer_sickle", bgColors: ["#cc0000", "#dd0000", "#ffcc00"], histCountries: ["URSS", "RDA"], currCountries: ["Chine", "Cuba"] },
-            { party: "Démocratie Libérale", leaders: ["Franklin D. Roosevelt", "Winston Churchill", "Charles de Gaulle"], culture: "Libéralisme & Marché", symbol: "star", bgColors: ["#003399", "#ffffff", "#cc0000"], histCountries: ["République Romaine", "USA (XXe)"], currCountries: ["États-Unis", "France"] },
-            { party: "Monarchie Absolue", leaders: ["Louis XIV", "Napoléon Ier", "Pierre le Grand"], culture: "Tradition Impériale", symbol: "crown", bgColors: ["#4b0082", "#ffd700", "#ffffff"], histCountries: ["Empire Français", "Empire Russe"], currCountries: ["Arabie Saoudite", "Oman"] },
-            { party: "Social-Démocratie", leaders: ["Olof Palme", "Willy Brandt", "Nelson Mandela"], culture: "État-Providence", symbol: "rose", bgColors: ["#e63946", "#ffffff", "#1d3557"], histCountries: ["Suède (Palme)", "Autriche Rouge"], currCountries: ["Suède", "Norvège"] },
-            { party: "Théocratie", leaders: ["Ruhollah Khomeini", "Innocent III", "Savonarole"], culture: "Loi Sacrée", symbol: "cross", bgColors: ["#006633", "#ffffff", "#ffd700"], histCountries: ["États Pontificaux", "Califat Abbaside"], currCountries: ["Iran", "Vatican"] },
-            { party: "Technocratie", leaders: ["Howard Scott", "Elon Musk", "Alexander Bogdanov"], culture: "Efficacité Scientifique", symbol: "atom", bgColors: ["#008080", "#101010", "#00ffff"], histCountries: ["Projet CyberSyn", "Technocracy Inc."], currCountries: ["Singapour", "Estonie"] }
+            { party: "Fascisme", leaders: ["Adolf Hitler", "Benito Mussolini"], culture: "Militarisme Radical", symbol: "🪓", colors: ["#800000", "#111111", "#dddddd"], pattern: "triangle", histCountries: ["Allemagne Nazie", "Italie Fasciste"], currCountries: ["Corée du Nord", "Érythrée"] },
+            { party: "Communisme", leaders: ["Lénine", "Joseph Staline", "Mao Zedong"], culture: "Collectivisme d'État", symbol: "☭", colors: ["#cc0000", "#dd0000", "#ffcc00"], pattern: "canton", histCountries: ["URSS", "RDA"], currCountries: ["Chine", "Cuba"] },
+            { party: "Démocratie Libérale", leaders: ["Roosevelt", "Churchill", "De Gaulle"], culture: "Libéralisme & Marché", symbol: "★", colors: ["#003399", "#ffffff", "#cc0000"], pattern: "stripes", histCountries: ["République Romaine", "USA (XXe)"], currCountries: ["États-Unis", "France"] },
+            { party: "Monarchie Absolue", leaders: ["Louis XIV", "Napoléon Ier"], culture: "Tradition Impériale", symbol: "👑", colors: ["#4b0082", "#ffd700", "#ffffff"], pattern: "losange", histCountries: ["Empire Français", "Empire Russe"], currCountries: ["Arabie Saoudite", "Oman"] },
+            { party: "Social-Démocratie", leaders: ["Olof Palme", "Willy Brandt"], culture: "État-Providence", symbol: "🌹", colors: ["#e63946", "#ffffff", "#1d3557"], pattern: "horizontal", histCountries: ["Suède (Palme)", "Autriche Rouge"], currCountries: ["Suède", "Norvège"] },
+            { party: "Théocratie", leaders: ["Ruhollah Khomeini", "Savonarole"], culture: "Loi Sacrée", symbol: "☪️", colors: ["#006633", "#ffffff", "#ffd700"], pattern: "center_band", histCountries: ["États Pontificaux", "Califat Abbaside"], currCountries: ["Iran", "Vatican"] },
+            { party: "Technocratie", leaders: ["Howard Scott", "Elon Musk"], culture: "Efficacité Scientifique", symbol: "⚛️", colors: ["#008080", "#101010", "#00ffff"], pattern: "diagonal", histCountries: ["Projet CyberSyn", "Technocracy Inc."], currCountries: ["Singapour", "Estonie"] }
         ];
 
-        let currentLang = "fr";
-        let activeMode = "wheel"; // 'wheel' ou 'manual'
+        let activeMode = "wheel";
         let currentStepIndex = 0;
         let isSpinning = false;
         let currentCountry = {};
         let currentWheelOptions = [];
 
-        // Remplir la sélection du formulaire manuel
         const selectPartyElem = document.getElementById('m-party');
         politicalData.forEach((p, idx) => {
             let opt = document.createElement('option');
@@ -417,7 +411,6 @@
                 simCurr: partyObj.currCountries[0]
             };
 
-            // Mettre à jour l'affichage UI
             document.getElementById('c-area').innerText = `${area.toLocaleString('fr-FR')} km²`;
             document.getElementById('c-pop').innerText = `${(pop/1000000).toFixed(1)}M hab.`;
             document.getElementById('c-density').innerText = `${density} hab/km²`;
@@ -432,8 +425,81 @@
             document.getElementById('c-sim-curr').innerText = currentCountry.simCurr;
             document.getElementById('c-name').innerText = name;
 
-            drawCustomFlag(partyObj);
+            generatePolitiScalesFlag(partyObj);
             updateComparison();
+        }
+
+        /* --- GÉNÉRATEUR DE DRAPEAU STYLE POLITISCALES --- */
+        function generatePolitiScalesFlag(partyObj, customStyle = null) {
+            const canvas = document.getElementById('flagCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const p = partyObj || politicalData[2];
+            const colors = customStyle?.colors || p.colors;
+            const pattern = customStyle?.pattern || p.pattern;
+            const symbol = customStyle?.symbol || p.symbol;
+
+            const w = canvas.width;
+            const h = canvas.height;
+
+            // FOND & PATTERNS GEOMETRIQUES (POLITISCALES)
+            if (pattern === "stripes") {
+                const bandW = w / 3;
+                ctx.fillStyle = colors[0]; ctx.fillRect(0, 0, bandW, h);
+                ctx.fillStyle = colors[1]; ctx.fillRect(bandW, 0, bandW, h);
+                ctx.fillStyle = colors[2]; ctx.fillRect(bandW * 2, 0, bandW, h);
+            } else if (pattern === "horizontal") {
+                const bandH = h / 3;
+                ctx.fillStyle = colors[0]; ctx.fillRect(0, 0, w, bandH);
+                ctx.fillStyle = colors[1]; ctx.fillRect(0, bandH, w, bandH);
+                ctx.fillStyle = colors[2]; ctx.fillRect(0, bandH * 2, w, bandH);
+            } else if (pattern === "triangle") {
+                ctx.fillStyle = colors[0]; ctx.fillRect(0, 0, w, h);
+                ctx.fillStyle = colors[1];
+                ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(w * 0.45, h / 2); ctx.lineTo(0, h); ctx.closePath(); ctx.fill();
+            } else if (pattern === "canton") {
+                ctx.fillStyle = colors[0]; ctx.fillRect(0, 0, w, h);
+                ctx.fillStyle = colors[1]; ctx.fillRect(0, 0, w * 0.4, h * 0.5);
+            } else if (pattern === "losange") {
+                ctx.fillStyle = colors[0]; ctx.fillRect(0, 0, w, h);
+                ctx.fillStyle = colors[1];
+                ctx.beginPath(); ctx.moveTo(w/2, 15); ctx.lineTo(w - 20, h/2); ctx.lineTo(w/2, h - 15); ctx.lineTo(20, h/2); ctx.closePath(); ctx.fill();
+            } else if (pattern === "diagonal") {
+                ctx.fillStyle = colors[0]; ctx.fillRect(0, 0, w, h);
+                ctx.fillStyle = colors[1];
+                ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(w, h); ctx.lineTo(w, h * 0.7); ctx.lineTo(0, 0); ctx.closePath(); ctx.fill();
+            } else { // center_band
+                ctx.fillStyle = colors[0]; ctx.fillRect(0, 0, w, h);
+                ctx.fillStyle = colors[1]; ctx.fillRect(0, h * 0.25, w, h * 0.5);
+            }
+
+            // ÉCUSSON / SYMBOLE CENTRAL POLITISCALES
+            const cx = pattern === "triangle" ? w * 0.15 : (pattern === "canton" ? w * 0.2 : w / 2);
+            const cy = pattern === "canton" ? h * 0.25 : h / 2;
+
+            ctx.save();
+            ctx.shadowColor = "rgba(0,0,0,0.5)";
+            ctx.shadowBlur = 8;
+            
+            // Rond central pour le symbole
+            ctx.beginPath();
+            ctx.arc(cx, cy, 32, 0, Math.PI * 2);
+            ctx.fillStyle = colors[2] || "#ffffff";
+            ctx.fill();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = colors[0];
+            ctx.stroke();
+
+            // Dessin du Symbole
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = colors[0];
+            ctx.font = "bold 26px sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(symbol, cx, cy);
+
+            ctx.restore();
         }
 
         const prefixes = ["Val", "Ar", "Bel", "Kael", "Nov", "Zor", "Ond", "Eld", "Mar", "Sol"];
@@ -519,27 +585,6 @@
             drawWheel(currentWheelOptions);
         }
 
-        function drawCustomFlag(partyObj) {
-            const canvas = document.getElementById('flagCanvas');
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            if (!partyObj) { ctx.fillStyle = "#222"; ctx.fillRect(0, 0, canvas.width, canvas.height); return; }
-
-            let colors = partyObj.bgColors; let w = canvas.width / 3;
-            for (let i = 0; i < 3; i++) { ctx.fillStyle = colors[i]; ctx.fillRect(i * w, 0, w, canvas.height); }
-
-            let cx = canvas.width / 2, cy = canvas.height / 2;
-            ctx.fillStyle = "#ffd700"; ctx.strokeStyle = "#111"; ctx.lineWidth = 3;
-            ctx.font = "bold 45px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-
-            if (partyObj.symbol === "fasces") ctx.fillText("🪓", cx, cy);
-            else if (partyObj.symbol === "hammer_sickle") ctx.fillText("☭", cx, cy);
-            else if (partyObj.symbol === "star") ctx.fillText("★", cx, cy);
-            else if (partyObj.symbol === "crown") ctx.fillText("👑", cx, cy);
-            else if (partyObj.symbol === "cross") ctx.fillText("✝️", cx, cy);
-            else ctx.fillText("⚛️", cx, cy);
-        }
-
         function spinNextStep() {
             if (isSpinning) return;
             isSpinning = true;
@@ -577,7 +622,7 @@
                 else if (stepKey === "final") {
                     currentCountry.name = result.value;
                     document.getElementById('c-name').innerText = currentCountry.name;
-                    drawCustomFlag(currentCountry.partyObj);
+                    generatePolitiScalesFlag(currentCountry.partyObj);
                     const pData = currentCountry.partyObj || politicalData[0];
                     currentCountry.simHist = pData.histCountries[0];
                     currentCountry.simCurr = pData.currCountries[0];
@@ -646,7 +691,7 @@
             }
         }
 
-        // CHATBOT ET EXPLICATION COMPLETE
+        /* --- IA ET GÉNÉRATION IA DE DRAPEAU --- */
         async function askIA() {
             const input = document.getElementById('chatInput');
             const query = input.value.trim();
@@ -657,9 +702,41 @@
             input.value = "";
             chatLogs.scrollTop = chatLogs.scrollHeight;
 
+            // Détection si la commande demande de générer / modifier le drapeau avec l'IA
+            const qLower = query.toLowerCase();
+            if (qLower.includes("drapeau") || qLower.includes("bannière") || qLower.includes("flag")) {
+                chatLogs.innerHTML += `<div class="chat-msg ia">🎨 <b>IA Designer :</b> Analyse de l'idéologie (<i>${currentCountry.party || 'Démocratie'}</i>) et génération d'un drapeau PolitiScales...</div>`;
+                
+                setTimeout(() => {
+                    const patterns = ["stripes", "horizontal", "triangle", "canton", "losange", "diagonal", "center_band"];
+                    const symbols = ["★", "☭", "👑", "🌹", "☪️", "⚛️", "🪓", "⚖️", "🦅", "☀️"];
+                    const paletteList = [
+                        ["#d90429", "#edf2f4", "#2b2d42"],
+                        ["#0077b6", "#00b4d8", "#90e0ef"],
+                        ["#2a9d8f", "#e9c46a", "#f4a261"],
+                        ["#6a040f", "#dc2f02", "#ffba08"],
+                        ["#111111", "#e63946", "#ffffff"]
+                    ];
+
+                    const chosenPattern = patterns[Math.floor(Math.random() * patterns.length)];
+                    const chosenSymbol = currentCountry.partyObj?.symbol || symbols[Math.floor(Math.random() * symbols.length)];
+                    const chosenPalette = paletteList[Math.floor(Math.random() * paletteList.length)];
+
+                    generatePolitiScalesFlag(currentCountry.partyObj, {
+                        pattern: chosenPattern,
+                        symbol: chosenSymbol,
+                        colors: chosenPalette
+                    });
+
+                    chatLogs.innerHTML += `<div class="chat-msg ia">✅ <b>IA Designer :</b> Nouveau drapeau PolitiScales généré avec succès ! (Motif: ${chosenPattern}, Symbole: ${chosenSymbol})</div>`;
+                    chatLogs.scrollTop = chatLogs.scrollHeight;
+                }, 600);
+                return;
+            }
+
+            // Explication générale du pays
             const name = currentCountry.name || "";
-            // Si la question concerne le pays actuellement créé
-            if (name && query.toLowerCase().includes(name.toLowerCase())) {
+            if (name && qLower.includes(name.toLowerCase())) {
                 setTimeout(() => {
                     const fullDescription = `🤖 <b>Fiche Complète de ${name} :</b><br>` +
                         `• <b>Superficie :</b> ${currentCountry.area ? currentCountry.area.toLocaleString('fr-FR') + ' km²' : '-'}<br>` +
@@ -671,21 +748,19 @@
                         `• <b>IDH :</b> ${currentCountry.hdi || '-'}<br>` +
                         `• <b>Régime politique :</b> ${currentCountry.party || '-'}<br>` +
                         `• <b>Leader :</b> ${currentCountry.leader || '-'}<br>` +
-                        `• <b>Culture :</b> ${currentCountry.culture || '-'}<br>` +
-                        `• <b>Équivalents réels :</b> ${currentCountry.simHist} (Histoire) | ${currentCountry.simCurr} (Actuel)`;
+                        `• <b>Culture :</b> ${currentCountry.culture || '-'}`;
                     chatLogs.innerHTML += `<div class="chat-msg ia">${fullDescription}</div>`;
                     chatLogs.scrollTop = chatLogs.scrollHeight;
                 }, 400);
                 return;
             }
 
-            // Sinon recherche sur Wikipédia
+            // Recherche Wikipédia par défaut
             chatLogs.innerHTML += `<div class="chat-msg ia">🔍 <i>Recherche sur Wikipédia...</i></div>`;
             chatLogs.scrollTop = chatLogs.scrollHeight;
 
             try {
-                const wikiLang = currentLang || "fr";
-                const response = await fetch(`https://${wikiLang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`);
+                const response = await fetch(`https://fr.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`);
                 if (response.ok) {
                     const data = await response.json();
                     if (data.extract) chatLogs.innerHTML += `<div class="chat-msg ia">📚 <b>Wikipédia (${data.title}) :</b> ${data.extract}</div>`;
@@ -698,8 +773,9 @@
         }
 
         updateStepWheel();
-        drawCustomFlag(null);
+        generatePolitiScalesFlag(null);
     </script>
 </body>
 </html>
+
 
