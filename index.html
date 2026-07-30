@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Générateur de Nation & Tournoi Manuel</title>
+  <style>
+    body {
+      background-color: #0b0b0d;
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .badge {
+      background-color: #1c1c1e;
+      color: #3b82f6;
+      padding: 10px 24px;
+      border-radius: 20px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      border: 1px solid #2c2c2e;
+    }
+
+    .result {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+      height: 45px;
+      text-align: center;
+      color: #ffffff;
+    }
+
+    .wheel-container {
+      position: relative;
+      width: 320px;
+      height: 320px;
+      margin-bottom: 20px;
+    }
+
+    .pointer {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 14px solid transparent;
+      border-right: 14px solid transparent;
+      border-top: 24px solid #ffffff;
+      z-index: 10;
+      filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.5));
+    }
+
+    canvas#wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      box-shadow: 0 0 25px rgba(0,0,0,0.9);
+      cursor: pointer;
+    }
+
+    .center-circle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60px;
+      height: 60px;
+      background: #1c1c1e;
+      border: 5px solid #2c2c2e;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    button:hover { background-color: #1d4ed8; }
+    button:active { transform: scale(0.98); }
+
+    /* Zone de résultat final et drapeau/carte */
+    .summary-card {
+      background: #18181b;
+      border: 1px solid #27272a;
+      border-radius: 20px;
+      padding: 24px;
+      width: 100%;
+      max-width: 500px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    }
+
+    .media-container {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 15px 0 20px 0;
+    }
+
+    .flag-container, .map-container {
+      width: 200px;
+      height: 120px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+      overflow: hidden;
+      border: 2px solid rgba(255,255,255,0.15);
+      background: #000;
+    }
+
+    canvas.small-canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    .stats-list {
+      text-align: left;
+      width: 100%;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .stats-list span {
+      color: #60a5fa;
+      font-weight: bold;
+    }
+
+    /* Grille du Mode Tournoi */
+    .tournament-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 100%;
+      max-width: 600px;
+      margin-top: 20px;
+    }
+
+    .tournament-item {
+      background: #18181b;
+      border: 1px solid #27272a;
+      border-radius: 12px;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .tournament-rank {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #fbbf24;
+      min-width: 35px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="badge" id="category-badge">🌍 1. Taille du pays</div>
+  <div class="result" id="result-text">Cliquez sur la roue !</div>
+
+  <div class="wheel-container" id="wheel-box">
+    <div class="pointer"></div>
+    <canvas id="wheel" width="600" height="600"></canvas>
+    <div class="center-circle"></div>
+  </div>
+
+  <div class="btn-group">
+    <button onclick="spinWheel()">🎲 Lancer la roue</button>
+    <button onclick="startSingleMode()" style="background-color: #059669;">🔄 1 Seul Pays</button>
+    <button onclick="startTournamentMode()" style="background-color: #d97706;">🏆 Tournoi (5 Pays à la roue)</button>
+  </div>
+
+  <!-- Résultat final Solo -->
+  <div class="summary-card" id="summary-card">
+    <h2 style="margin: 0; color: #f3f4f6;">Nation Générée ! 🎉</h2>
+    <p style="color: #9ca3af; margin: 4px 0 8px 0;">Drapeau & Carte du territoire :</p>
+    
+    <div class="media-container">
+      <div class="flag-container">
+        <canvas id="flag" class="small-canvas" width="200" height="120"></canvas>
+      </div>
+      <div class="map-container">
+        <canvas id="map" class="small-canvas" width="200" height="120"></canvas>
+      </div>
+    </div>
+
+    <div class="stats-list" id="stats-list"></div>
+  </div>
+
+  <!-- Conteneur Tournoi -->
+  <div class="tournament-grid" id="tournament-grid"></div>
+
+  <script>
+    const steps = [
+      { name: "🌍 1. Taille du pays", key: "size", items: ["1 km² (Atoll)", "50 km²", "500 km²", "50 000 km²", "250 000 km²", "1 M km²", "5 M km²", "10 M km²", "Toute la Terre", "Système Solaire"] },
+      { name: "👤 2. Population", key: "pop", items: ["1 Habitant", "1 000 Hab.", "50 000 Hab.", "2 Millions", "10 Millions", "50 Millions", "200 Millions", "1 Milliard", "8 Milliards", "100 Milliards (Clones)"] },
+      { name: "🏛️ 3. Système Politique", key: "politics", items: ["Anarchie Totale", "Tribalisme", "Dictature Militaire", "Communisme", "République", "Monarchie", "Technocratie", "IA Souveraine", "Empire Galactique", "Dieu-Roi Incontesté"] },
+      { name: "💰 4. Économie", key: "economy", items: ["Troc de Cailloux", "Vente de Bananes", "Marché Noir", "Industrie du Fromage", "Agriculture", "High-Tech", "Industrie du Clonage", "Vente d'Uranium", "Ressources Infinies", "Mines de Matière Noire"] },
+      { name: "🎭 5. Trait du Dirigeant", key: "leader", items: ["Pigeon Amnésique", "Tyran Paranoïaque", "Presse-papier", "Paresseux Ultime", "Négociateur", "Médecin Génial", "Stratège d'Élite", "Génie (PIB x10)", "ImmorteI Tout-Puissant", "Omniscient"] },
+      { name: "⚔️ 6. Armée", key: "military", items: ["3 Pigeons armés", "Bâtons & Pierres", "Milice Locale", "Garde Civile", "Puissance Régionale", "Armée d'Élite", "Superpuissance", "Flotte Nucléaire", "Armée de Clones Cyborgs", "Rayon Destructeur d'Étoile"] },
+      { name: "🗿 7. Culture", key: "culture", items: ["Panique Générale", "Batailles d'Outils", "Rebelle & Chaotique", "Duels pour l'Honneur", "Artiste & Rêveuse", "Chasseurs de Primes", "Scientifique", "Conquérants Spatiaux", "Esprit de Ruche Unifié", "Moines Célestes"] },
+      { name: "🌅 8. Surnom", key: "nickname", items: ["La Poubelle Humide", "Le Territoire Oublié", "Le Village du Seum", "L'Empire du Fromage", "La Terre de l'Honneur", "Le Royaume Doré", "La Citadelle Éternelle", "L'Union Cyber", "Le Bastion Invincible", "L'Empire des Étoiles"] }
+    ];
+
+    // Variables du mode Tournoi
+    let isTournamentMode = false;
+    let tournamentNations = [];
+    let currentNationIndex = 0;
+
+    let currentStepIndex = 0;
+    let nationData = {};
+    let isSpinning = false;
+    let currentAngle = 0;
+
+    const canvas = document.getElementById("wheel");
+    const ctx = canvas.getContext("2d");
+    const resultText = document.getElementById("result-text");
+    const categoryBadge = document.getElementById("category-badge");
+
+    const palette = ["#ef4444", "#f97316", "#f59e0b", "#10b981", "#06b6d4", "#3b82f6", "#6366f1", "#8b5cf6", "#ec4899", "#14b8a6"];
+
+    function getCurrentItems() { return steps[currentStepIndex].items; }
+
+    function updateBadgeText() {
+      if (isTournamentMode) {
+        categoryBadge.innerText = `🚩 Pays ${currentNationIndex + 1}/5 — ${steps[currentStepIndex].name}`;
+      } else {
+        categoryBadge.innerText = steps[currentStepIndex].name;
+      }
+    }
+
+    function drawWheel() {
+      const items = getCurrentItems();
+      const numSegments = items.length;
+      const arcSize = (2 * Math.PI) / numSegments;
+      const radius = canvas.width / 2;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < numSegments; i++) {
+        const angle = currentAngle + i * arcSize;
+        ctx.beginPath();
+        ctx.fillStyle = palette[i % palette.length];
+        ctx.moveTo(radius, radius);
+        ctx.arc(radius, radius, radius, angle, angle + arcSize);
+        ctx.lineTo(radius, radius);
+        ctx.fill();
+        ctx.strokeStyle = "#0b0b0d";
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        ctx.save();
+        ctx.translate(radius, radius);
+        ctx.rotate(angle + arcSize / 2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 18px sans-serif";
+        ctx.fillText(items[i], radius - 15, 6);
+        ctx.restore();
+      }
+    }
+
+    function spinWheel() {
+      if (isSpinning) return;
+      document.getElementById("summary-card").style.display = "none";
+      document.getElementById("tournament-grid").innerHTML = "";
+      document.getElementById("wheel-box").style.display = "block";
+
+      isSpinning = true;
+      resultText.innerText = "Tirage en cours...";
+
+      const spinAngle = Math.random() * 8 + 20; 
+      const duration = 2500;
+      const start = performance.now();
+      const initialAngle = currentAngle;
+
+      function animate(time) {
+        const elapsed = time - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        currentAngle = initialAngle + easeOut * spinAngle;
+
+        drawWheel();
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          isSpinning = false;
+          saveResult();
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+
+    function saveResult() {
+      const items = getCurrentItems();
+      const numSegments = items.length;
+      const degrees = (currentAngle * 180 / Math.PI) % 360;
+      let relativeAngle = (270 - degrees) % 360;
+      if (relativeAngle < 0) relativeAngle += 360;
+
+      const index = Math.floor(relativeAngle / (360 / numSegments));
+      const selectedValue = items[index];
+
+      resultText.innerText = selectedValue;
+      nationData[steps[currentStepIndex].key] = selectedValue;
+
+      currentStepIndex++;
+
+      // Si le pays en cours est fini (8 catégories validées)
+      if (currentStepIndex >= steps.length) {
+        if (isTournamentMode) {
+          tournamentNations.push({ ...nationData });
+          nationData = {};
+          currentStepIndex = 0;
+          currentNationIndex++;
+
+          if (currentNationIndex < 5) {
+            setTimeout(() => {
+              updateBadgeText();
+              resultText.innerText = `Tournez la roue pour le Pays ${currentNationIndex + 1} !`;
+              drawWheel();
+            }, 1200);
+          } else {
+            // Les 5 pays ont été tirés !
+            setTimeout(showTournamentResults, 1000);
+          }
+        } else {
+          // Mode 1 seul Pays fini
+          setTimeout(generateNationAndFlag, 1000);
+        }
+      } else {
+        setTimeout(() => {
+          updateBadgeText();
+          resultText.innerText = "Tournez la roue !";
+          drawWheel();
+        }, 1000);
+      }
+    }
+
+    function startSingleMode() {
+      isTournamentMode = false;
+      currentStepIndex = 0;
+      currentNationIndex = 0;
+      nationData = {};
+      document.getElementById("summary-card").style.display = "none";
+      document.getElementById("tournament-grid").innerHTML = "";
+      document.getElementById("wheel-box").style.display = "block";
+      updateBadgeText();
+      resultText.innerText = "Tournez la roue !";
+      drawWheel();
+    }
+
+    function startTournamentMode() {
+      isTournamentMode = true;
+      tournamentNations = [];
+      currentNationIndex = 0;
+      currentStepIndex = 0;
+      nationData = {};
+      document.getElementById("summary-card").style.display = "none";
+      document.getElementById("tournament-grid").innerHTML = "";
+      document.getElementById("wheel-box").style.display = "block";
+      updateBadgeText();
+      resultText.innerText = "C'est parti pour 5 Pays ! Tournez la roue !";
+      drawWheel();
+    }
+
+    // AFFICHER RÉSULTAT SOLO
+    function generateNationAndFlag() {
+      document.getElementById("summary-card").style.display = "flex";
+      categoryBadge.innerText = "🏆 Nation Terminée !";
+      resultText.innerText = nationData.nickname;
+
+      document.getElementById("stats-list").innerHTML = `
+        • Surnom : <span>${nationData.nickname}</span><br>
+        • Taille : <span>${nationData.size}</span><br>
+        • Population : <span>${nationData.pop}</span><br>
+        • Régime : <span>${nationData.politics}</span><br>
+        • Économie : <span>${nationData.economy}</span><br>
+        • Leader : <span>${nationData.leader}</span><br>
+        • Armée : <span>${nationData.military}</span><br>
+        • Culture : <span>${nationData.culture}</span>
+      `;
+
+      drawFlag(document.getElementById("flag"), nationData);
+      drawMap(document.getElementById("map"), nationData);
+    }
+
+    // AFFICHER LE RÉSULTAT DES 5 PAYS TIRÉS À LA ROUE
+    function showTournamentResults() {
+      document.getElementById("wheel-box").style.display = "none";
+      categoryBadge.innerText = "🏆 Résultat du Tournoi (5 Pays)";
+      resultText.innerText = "Classement Final des 5 Nations !";
+
+      const grid = document.getElementById("tournament-grid");
+      grid.innerHTML = "";
+
+      // Calcul d'un score de puissance basé sur les indices des éléments dans la liste
+      let rankedNations = tournamentNations.map(n => {
+        let score = steps[5].items.indexOf(n.military) + steps[3].items.indexOf(n.economy) + steps[0].items.indexOf(n.size);
+        return { data: n, score: score };
+      });
+
+      rankedNations.sort((a, b) => b.score - a.score);
+
+      rankedNations.forEach((item, index) => {
+        const n = item.data;
+        const card = document.createElement("div");
+        card.className = "tournament-item";
+
+        card.innerHTML = `
+          <div class="tournament-rank">#${index + 1}</div>
+          <div style="flex:1;">
+            <div style="font-weight:bold; color:#60a5fa; font-size:1.1rem;">${n.nickname}</div>
+            <div style="font-size:0.85rem; color:#d1d5db; margin-top:4px;">
+              🏛️ ${n.politics} | ⚔️ ${n.military}<br>
+              💰 ${n.economy} | 👤 ${n.pop}
+            </div>
+          </div>
+          <canvas id="t-flag-${index}" width="80" height="50" style="border-radius:4px; border:1px solid #555;"></canvas>
+        `;
+        grid.appendChild(card);
+        drawFlag(document.getElementById(`t-flag-${index}`), n);
+      });
+    }
+
+    // DESSIN DU DRAPEAU
+    function drawFlag(canvasElem, data) {
+      const fctx = canvasElem.getContext("2d");
+      const w = canvasElem.width, h = canvasElem.height;
+
+      let colorTop = "#1d4ed8", colorMid = "#ffffff", colorBot = "#dc2626", symbol = "⭐";
+
+      if (data.politics.includes("Communisme")) { colorTop = "#b91c1c"; colorMid = "#991b1b"; colorBot = "#7f1d1d"; symbol = "☭"; }
+      else if (data.politics.includes("Anarchie")) { colorTop = "#18181b"; colorMid = "#000000"; colorBot = "#18181b"; symbol = "🅰️"; }
+      else if (data.politics.includes("Empire") || data.politics.includes("Monarchie")) { colorTop = "#581c87"; colorMid = "#fbbf24"; colorBot = "#312e81"; symbol = "👑"; }
+      else if (data.politics.includes("Technocratie")) { colorTop = "#0284c7"; colorMid = "#0f172a"; colorBot = "#0284c7"; symbol = "⚙️"; }
+
+      if (data.economy.includes("Fromage")) symbol = "🧀";
+      if (data.economy.includes("Clonage")) symbol = "🧬";
+      if (data.economy.includes("Bananes")) symbol = "🍌";
+      if (data.leader.includes("Pigeon")) symbol = "🐦";
+
+      fctx.fillStyle = colorTop; fctx.fillRect(0, 0, w, h / 3);
+      fctx.fillStyle = colorMid; fctx.fillRect(0, h / 3, w, h / 3);
+      fctx.fillStyle = colorBot; fctx.fillRect(0, (2 * h) / 3, w, h / 3);
+
+      fctx.fillStyle = "#ffffff"; fctx.beginPath(); fctx.arc(w / 2, h / 2, h / 5, 0, Math.PI * 2); fctx.fill();
+      fctx.strokeStyle = "#000"; fctx.lineWidth = 1; fctx.stroke();
+
+      fctx.font = `${Math.floor(h/3)}px sans-serif`; fctx.textAlign = "center"; fctx.textBaseline = "middle";
+      fctx.fillText(symbol, w / 2, h / 2);
+    }
+
+    // DESSIN DE LA CARTE DU PAYS
+    function drawMap(canvasElem, data) {
+      const mctx = canvasElem.getContext("2d");
+      const w = canvasElem.width, h = canvasElem.height;
+
+      mctx.fillStyle = "#0284c7";
+      mctx.fillRect(0, 0, w, h);
+
+      mctx.fillStyle = "#15803d";
+      mctx.beginPath();
+      
+      const points = 8;
+      const centerX = w / 2, centerY = h / 2;
+      const radius = 35;
+
+      for (let i = 0; i < points; i++) {
+        const angle = (i / points) * Math.PI * 2;
+        const randomRadius = radius + (Math.sin(i * 3) * 12);
+        const x = centerX + Math.cos(angle) * randomRadius;
+        const y = centerY + Math.sin(angle) * randomRadius;
+        if (i === 0) mctx.moveTo(x, y);
+        else mctx.lineTo(x, y);
+      }
+      mctx.closePath();
+      mctx.fill();
+      mctx.strokeStyle = "#166534";
+      mctx.lineWidth = 3;
+      mctx.stroke();
+
+      mctx.fillStyle = "#ef4444";
+      mctx.beginPath(); mctx.arc(centerX, centerY, 4, 0, Math.PI * 2); mctx.fill();
+      
+      mctx.fillStyle = "#ffffff";
+      mctx.font = "10px sans-serif";
+      mctx.textAlign = "center";
+      mctx.fillText("★ Capitale", centerX, centerY - 8);
+    }
+
+    drawWheel();
+    canvas.addEventListener("click", spinWheel);
+  </script>
+</body>
+</html>
