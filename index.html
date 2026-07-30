@@ -17,7 +17,7 @@
             overflow-x: hidden;
         }
 
-        /* --- ÉCRAN D'ACCUEIL (LANDING SCREEN) --- */
+        /* --- ÉCRAN D'ACCUEIL --- */
         #welcome-screen {
             position: fixed;
             top: 0; left: 0;
@@ -55,213 +55,118 @@
             align-items: center;
         }
 
-        .globe-container {
-            width: 110px;
-            height: 110px;
-            margin-bottom: 20px;
-        }
-
-        #globeCanvas {
-            width: 100%;
-            height: 100%;
-        }
+        .globe-container { width: 110px; height: 110px; margin-bottom: 20px; }
+        #globeCanvas { width: 100%; height: 100%; }
 
         .welcome-title {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 12px;
+            font-size: 2rem; font-weight: 800; margin-bottom: 12px;
             background: linear-gradient(135deg, #7f5af0, #2cb67d);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        .welcome-desc {
-            font-size: 0.95rem;
-            color: #a7a9be;
-            line-height: 1.5;
-            margin-bottom: 25px;
-        }
-
-        .welcome-desc strong {
-            color: #fffffe;
-        }
+        .welcome-desc { font-size: 0.95rem; color: #a7a9be; line-height: 1.5; margin-bottom: 25px; }
+        .welcome-desc strong { color: #fffffe; }
 
         .btn-start {
-            background-color: #2cb67d;
-            color: #0b0b0d;
-            font-size: 1.2rem;
-            font-weight: 800;
-            padding: 14px 45px;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
+            background-color: #2cb67d; color: #0b0b0d; font-size: 1.2rem; font-weight: 800;
+            padding: 14px 45px; border: none; border-radius: 50px; cursor: pointer;
             box-shadow: 0 0 20px rgba(44, 182, 125, 0.4);
-            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-transform: uppercase; letter-spacing: 1px;
         }
-
-        .btn-start:hover {
-            transform: scale(1.05);
-            background-color: #34d399;
-            box-shadow: 0 0 30px rgba(44, 182, 125, 0.7);
-        }
+        .btn-start:hover { transform: scale(1.05); background-color: #34d399; }
 
         /* --- APPLICATION PRINCIPALE --- */
         .app-container {
-            width: 100%;
-            max-width: 600px;
-            padding: 20px;
-            opacity: 0;
-            transition: opacity 1s ease;
+            width: 100%; max-width: 650px; padding: 20px; opacity: 0; transition: opacity 1s ease;
+        }
+
+        .mode-toggle-bar {
+            display: flex; gap: 10px; margin-bottom: 15px; width: 100%;
+        }
+
+        .btn-mode {
+            flex: 1; padding: 10px; border: 1px solid #7f5af0; background: #16161a;
+            color: #a7a9be; font-weight: bold; border-radius: 8px; cursor: pointer; text-align: center;
+        }
+
+        .btn-mode.active {
+            background: #7f5af0; color: #fff; box-shadow: 0 0 15px rgba(127, 90, 240, 0.4);
         }
 
         .header-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            margin-bottom: 15px;
-            background: #16161a;
-            padding: 10px 15px;
-            border-radius: 12px;
-            border: 1px solid #242429;
+            display: flex; justify-content: space-between; align-items: center; width: 100%;
+            margin-bottom: 15px; background: #16161a; padding: 10px 15px; border-radius: 12px; border: 1px solid #242429;
         }
 
         .select-custom {
-            background: #242429;
-            color: #fffffe;
-            border: 1px solid #7f5af0;
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
+            background: #242429; color: #fffffe; border: 1px solid #7f5af0;
+            padding: 5px 10px; border-radius: 6px; font-weight: bold; cursor: pointer;
         }
 
         .card {
-            background-color: #16161a;
-            border-radius: 16px;
-            padding: 20px;
-            width: 100%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            text-align: center;
-            border: 1px solid #242429;
-            margin-bottom: 20px;
+            background-color: #16161a; border-radius: 16px; padding: 20px; width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; border: 1px solid #242429; margin-bottom: 20px;
         }
 
-        .wheel-box {
-            background: #242429;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 15px;
+        .wheel-box { background: #242429; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+        .wheel-title { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: #7f5af0; font-weight: bold; margin-bottom: 10px; }
+        .wheel-container { position: relative; width: 180px; height: 180px; margin: 0 auto; }
+        #wheel { width: 100%; height: 100%; border-radius: 50%; border: 4px solid #fffffe; transition: transform 2.5s cubic-bezier(0.15, 0.99, 0.18, 1); }
+        .pointer { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 20px solid #e63946; z-index: 10; }
+
+        /* FORMULAIRE MODE MANUEL */
+        .manual-form {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: left; margin-bottom: 15px; background: #242429; padding: 15px; border-radius: 12px;
         }
-        .wheel-title {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #7f5af0;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .wheel-container {
-            position: relative;
-            width: 180px;
-            height: 180px;
-            margin: 0 auto;
-        }
-        #wheel {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 4px solid #fffffe;
-            transition: transform 2.5s cubic-bezier(0.15, 0.99, 0.18, 1);
-        }
-        .pointer {
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0; height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-top: 20px solid #e63946;
-            z-index: 10;
+        .form-group { display: flex; flex-direction: column; }
+        .form-group.full { grid-column: span 2; }
+        .form-group label { font-size: 0.7rem; color: #94a1b2; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; }
+        .form-group input, .form-group select {
+            background: #16161a; border: 1px solid #7f5af0; color: white; padding: 8px; border-radius: 6px; font-size: 0.85rem;
         }
 
         canvas#flagCanvas {
-            width: 100%;
-            height: 130px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            margin-bottom: 15px;
-            border: 1px solid #333;
-            background: #111;
+            width: 100%; height: 130px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); margin-bottom: 15px; border: 1px solid #333; background: #111;
         }
 
-        .grid-stats {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; text-align: left;
-        }
+        .grid-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; text-align: left; }
         .info-group { background: #242429; padding: 8px 12px; border-radius: 6px; }
         .info-group.full { grid-column: span 2; }
         .label { font-size: 0.65rem; color: #94a1b2; text-transform: uppercase; font-weight: 600; }
         .value { font-size: 0.85rem; font-weight: bold; color: #fffffe; margin-top: 2px; }
 
-        .comp-box {
-            background: #1a1c23;
-            border: 1px solid #2cb67d;
-            border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 15px;
-            text-align: left;
-        }
+        .comp-box { background: #1a1c23; border: 1px solid #2cb67d; border-radius: 10px; padding: 12px; margin-bottom: 15px; text-align: left; }
         .comp-title { color: #2cb67d; font-size: 0.8rem; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; }
         .comp-item { font-size: 0.75rem; margin-bottom: 4px; color: #a7a9be; }
         .comp-item span { color: #fffffe; font-weight: bold; }
 
         .btn-group { display: flex; gap: 10px; }
-        button.btn-act {
-            flex: 1; background-color: #7f5af0; color: white; border: none; padding: 12px;
-            font-size: 0.95rem; font-weight: bold; border-radius: 8px; cursor: pointer;
-        }
+        button.btn-act { flex: 1; background-color: #7f5af0; color: white; border: none; padding: 12px; font-size: 0.95rem; font-weight: bold; border-radius: 8px; cursor: pointer; }
         button.btn-act:disabled { background-color: #444; cursor: not-allowed; }
         button.btn-auto { background-color: #2cb67d; }
 
-        .ia-box {
-            background: #121215;
-            border: 1px solid #7f5af0;
-            border-radius: 12px;
-            padding: 12px;
-            margin-top: 15px;
-            text-align: left;
-        }
+        .ia-box { background: #121215; border: 1px solid #7f5af0; border-radius: 12px; padding: 12px; margin-top: 15px; text-align: left; }
         .ia-title { color: #7f5af0; font-weight: bold; font-size: 0.9rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-        .chat-logs {
-            height: 160px; overflow-y: auto; background: #08080a; padding: 8px;
-            border-radius: 6px; font-size: 0.8rem; margin-bottom: 8px; border: 1px solid #222;
-        }
-        .chat-msg { margin-bottom: 6px; line-height: 1.3; }
+        .chat-logs { height: 180px; overflow-y: auto; background: #08080a; padding: 10px; border-radius: 6px; font-size: 0.8rem; margin-bottom: 8px; border: 1px solid #222; }
+        .chat-msg { margin-bottom: 8px; line-height: 1.4; }
         .chat-msg.user { color: #2cb67d; text-align: right; }
         .chat-msg.ia { color: #fffffe; }
         .chat-input-group { display: flex; gap: 6px; }
-        .chat-input {
-            flex: 1; background: #242429; border: 1px solid #333; color: #fff;
-            padding: 8px; border-radius: 6px; font-size: 0.8rem;
-        }
+        .chat-input { flex: 1; background: #242429; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 6px; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
-    <!-- ÉCRAN D'ACCUEIL (LANDING PAGE) -->
+    <!-- ÉCRAN D'ACCUEIL -->
     <div id="welcome-screen">
         <canvas id="starsCanvas"></canvas>
         <div class="welcome-content">
-            <div class="globe-container">
-                <canvas id="globeCanvas" width="110" height="110"></canvas>
-            </div>
+            <div class="globe-container"><canvas id="globeCanvas" width="110" height="110"></canvas></div>
             <h1 class="welcome-title">WikiNation & Géopolitique</h1>
             <p class="welcome-desc">
-                Une application interactive conçue pour vous aider à <strong>apprendre l'histoire</strong>, la <strong>géopolitique</strong> et la <strong>démographie</strong>.<br><br>
-                Générez des nations fictives, calculez leur densité de population, comparez leurs indicateurs (PIB, IDH, Armée) aux vrais pays du monde, et explorez les savoirs historiques grâce à l'assistant connecté à <strong>Wikipédia</strong>.
+                Une application interactive conçue pour vous aider à <strong>apprendre l'histoire</strong> et la <strong>géopolitique</strong>.<br><br>
+                Générez ou créez vos nations, comparez leurs indicateurs aux vrais pays, et posez vos questions sur Wikipédia.
             </p>
             <button class="btn-start" onclick="launchApp()">🚀 Lancer</button>
         </div>
@@ -269,6 +174,13 @@
 
     <!-- APPLICATION PRINCIPALE -->
     <div class="app-container" id="mainApp">
+
+        <!-- TOGGLE MODE DE CRÉATION -->
+        <div class="mode-toggle-bar">
+            <button id="btnModeWheel" class="btn-mode active" onclick="switchMode('wheel')">🎰 Mode Tirage Roue</button>
+            <button id="btnModeManual" class="btn-mode" onclick="switchMode('manual')">✍️ Mode Créateur Manuel</button>
+        </div>
+
         <div class="header-bar">
             <div>
                 <span class="label" id="lbl-compare">Comparer à :</span><br>
@@ -295,12 +207,29 @@
         </div>
 
         <div class="card">
-            <div class="wheel-box">
+            <!-- ROUE (MODE ALEATOIRE) -->
+            <div id="wheelSection" class="wheel-box">
                 <div id="wheelTitle" class="wheel-title">Tourner pour : Superficie</div>
                 <div class="wheel-container">
                     <div class="pointer"></div>
                     <canvas id="wheel" width="180" height="180"></canvas>
                 </div>
+            </div>
+
+            <!-- FORMULAIRE (MODE MANUEL) -->
+            <div id="manualSection" class="manual-form" style="display: none;">
+                <div class="form-group full"><label>Nom de la Nation</label><input type="text" id="m-name" value="Néo-Eldoria" onchange="applyManualConfig()"></div>
+                <div class="form-group"><label>Superficie (km²)</label><input type="number" id="m-area" value="500000" onchange="applyManualConfig()"></div>
+                <div class="form-group"><label>Population</label><input type="number" id="m-pop" value="45000000" onchange="applyManualConfig()"></div>
+                <div class="form-group"><label>PIB / Habitant ($)</label><input type="number" id="m-gdp-cap" value="35000" onchange="applyManualConfig()"></div>
+                <div class="form-group"><label>Armée (% Pop)</label><input type="number" step="0.1" id="m-army" value="0.5" onchange="applyManualConfig()"></div>
+                <div class="form-group"><label>IDH (0 à 1)</label><input type="number" step="0.01" id="m-hdi" value="0.850" onchange="applyManualConfig()"></div>
+                <div class="form-group">
+                    <label>Régime Politique</label>
+                    <select id="m-party" onchange="applyManualConfig()"></select>
+                </div>
+                <div class="form-group"><label>Leader</label><input type="text" id="m-leader" value="Alexandre III" onchange="applyManualConfig()"></div>
+                <div class="form-group"><label>Culture / Idéologie</label><input type="text" id="m-culture" value="Tradition & Science" onchange="applyManualConfig()"></div>
             </div>
 
             <canvas id="flagCanvas" width="300" height="130"></canvas>
@@ -318,19 +247,20 @@
                 <div class="info-group full"><div class="label" id="lbl-culture">Culture</div><div class="value" id="c-culture">-</div></div>
                 <div class="info-group"><div class="label" id="lbl-sim-hist">Similaire (Histoire)</div><div class="value" id="c-sim-hist" style="color:#f4a261;">-</div></div>
                 <div class="info-group"><div class="label" id="lbl-sim-curr">Similaire (Actuel)</div><div class="value" id="c-sim-curr" style="color:#2a9d8f;">-</div></div>
-                <div class="info-group full" style="border: 1px solid #7f5af0;"><div class="label" id="lbl-final-name" style="color: #7f5af0;">Nom de la Nation (Final)</div><div class="value" id="c-name" style="font-size: 1.1rem; color: #2cb67d;">???</div></div>
+                <div class="info-group full" style="border: 1px solid #7f5af0;"><div class="label" id="lbl-final-name" style="color: #7f5af0;">Nom de la Nation</div><div class="value" id="c-name" style="font-size: 1.1rem; color: #2cb67d;">???</div></div>
             </div>
 
             <div class="comp-box" id="compBox">
                 <div class="comp-title" id="compTitle">📊 Comparaison vs Pays Réel</div>
                 <div class="comp-item" id="comp-pop">Population : -</div>
+                <div class="comp-item" id="comp-area">Superficie : -</div>
+                <div class="comp-item" id="comp-density">Densité : -</div>
                 <div class="comp-item" id="comp-gdp">PIB Total : -</div>
                 <div class="comp-item" id="comp-army">Armée Active : -</div>
-                <div class="comp-item" id="comp-area">Superficie : -</div>
                 <div class="comp-item" id="comp-hdi">IDH : -</div>
             </div>
             
-            <div class="btn-group">
+            <div id="wheelBtnGroup" class="btn-group">
                 <button id="btnSpin" class="btn-act" onclick="spinNextStep()">Tourner la Roue !</button>
                 <button id="btnFullAuto" class="btn-act btn-auto" onclick="generateAllWithWheelAnimation()">⚡ Tout Tirer</button>
             </div>
@@ -341,7 +271,7 @@
                     <div class="chat-msg ia">👋 Pose-moi une question sur ton pays ou recherche un sujet sur Wikipédia !</div>
                 </div>
                 <div class="chat-input-group">
-                    <input type="text" id="chatInput" class="chat-input" placeholder="Rechercher sur Wikipédia ou poser une question..." onkeypress="if(event.key==='Enter') askIA()">
+                    <input type="text" id="chatInput" class="chat-input" placeholder="Rechercher sur Wikipédia..." onkeypress="if(event.key==='Enter') askIA()">
                     <button class="btn-act" style="flex:0; padding: 0 15px;" onclick="askIA()">💬</button>
                 </div>
             </div>
@@ -349,7 +279,7 @@
     </div>
 
     <script>
-        // --- ANIMATION FOND ÉTOILÉ & GLOBE 3D EN ROTATION ---
+        // ANIMATION ARRIÈRE-PLAN
         const starsCanvas = document.getElementById('starsCanvas');
         const starsCtx = starsCanvas.getContext('2d');
         let stars = [];
@@ -359,13 +289,7 @@
             starsCanvas.height = window.innerHeight;
             stars = [];
             for (let i = 0; i < 150; i++) {
-                stars.push({
-                    x: Math.random() * starsCanvas.width,
-                    y: Math.random() * starsCanvas.height,
-                    radius: Math.random() * 1.5,
-                    alpha: Math.random(),
-                    speed: Math.random() * 0.02
-                });
+                stars.push({ x: Math.random() * starsCanvas.width, y: Math.random() * starsCanvas.height, radius: Math.random() * 1.5, alpha: Math.random(), speed: Math.random() * 0.02 });
             }
         }
         window.addEventListener('resize', resizeCanvas);
@@ -385,7 +309,7 @@
         }
         animateStars();
 
-        // Rendu du Globe Terrestre
+        // GLOBE 3D
         const globeCanvas = document.getElementById('globeCanvas');
         const globeCtx = globeCanvas.getContext('2d');
         let globeRotation = 0;
@@ -393,59 +317,28 @@
         function drawGlobe() {
             globeCtx.clearRect(0, 0, 110, 110);
             const cx = 55, cy = 55, r = 45;
-
-            // Fond Océan
-            globeCtx.beginPath();
-            globeCtx.arc(cx, cy, r, 0, Math.PI * 2);
-            globeCtx.fillStyle = '#0f2b48';
-            globeCtx.fill();
-            globeCtx.strokeStyle = '#2cb67d';
-            globeCtx.lineWidth = 2;
-            globeCtx.stroke();
-
-            // Lignes Continentales / Méridiens animés
-            globeCtx.save();
-            globeCtx.beginPath();
-            globeCtx.arc(cx, cy, r - 1, 0, Math.PI * 2);
-            globeCtx.clip();
-
-            globeCtx.strokeStyle = 'rgba(44, 182, 125, 0.4)';
-            globeCtx.lineWidth = 1.5;
+            globeCtx.beginPath(); globeCtx.arc(cx, cy, r, 0, Math.PI * 2); globeCtx.fillStyle = '#0f2b48'; globeCtx.fill();
+            globeCtx.strokeStyle = '#2cb67d'; globeCtx.lineWidth = 2; globeCtx.stroke();
+            globeCtx.save(); globeCtx.beginPath(); globeCtx.arc(cx, cy, r - 1, 0, Math.PI * 2); globeCtx.clip();
+            globeCtx.strokeStyle = 'rgba(44, 182, 125, 0.4)'; globeCtx.lineWidth = 1.5;
 
             for (let i = -180; i < 180; i += 40) {
                 let xOffset = ((i + globeRotation) % 180) - 90;
-                globeCtx.beginPath();
-                globeCtx.ellipse(cx, cy, Math.abs(xOffset) * (r / 90), r, 0, 0, Math.PI * 2);
-                globeCtx.stroke();
+                globeCtx.beginPath(); globeCtx.ellipse(cx, cy, Math.abs(xOffset) * (r / 90), r, 0, 0, Math.PI * 2); globeCtx.stroke();
             }
-
-            // Équateur
-            globeCtx.beginPath();
-            globeCtx.moveTo(cx - r, cy);
-            globeCtx.lineTo(cx + r, cy);
-            globeCtx.stroke();
-
             globeCtx.restore();
-
             globeRotation += 0.8;
             requestAnimationFrame(drawGlobe);
         }
         drawGlobe();
 
-        // Lancer l'App
         function launchApp() {
-            const welcome = document.getElementById('welcome-screen');
-            const mainApp = document.getElementById('mainApp');
-
-            welcome.style.opacity = '0';
-            welcome.style.visibility = 'hidden';
-
-            setTimeout(() => {
-                mainApp.style.opacity = '1';
-            }, 300);
+            document.getElementById('welcome-screen').style.opacity = '0';
+            document.getElementById('welcome-screen').style.visibility = 'hidden';
+            setTimeout(() => { document.getElementById('mainApp').style.opacity = '1'; }, 300);
         }
 
-        // --- CODE DE L'APPLICATION (DONNÉES ET ROUETTE) ---
+        // DONNÉES
         const realCountriesData = {
             "France": { pop: 68000000, gdp: 3000000000000, army: 200000, area: 551000, hdi: 0.903 },
             "USA": { pop: 335000000, gdp: 25000000000000, army: 1390000, area: 9834000, hdi: 0.921 },
@@ -456,71 +349,98 @@
             "Royaume-Uni": { pop: 67000000, gdp: 3100000000000, army: 150000, area: 242000, hdi: 0.929 }
         };
 
-        const i18n = {
-            fr: {
-                compare: "Comparer à :", lang: "Langue :",
-                steps: ["Superficie", "Population", "Taux de Soldats", "IDH", "PIB / hab.", "Parti Politique", "Leader", "Culture", "Nom & Drapeau"],
-                spinBtn: "Tourner la Roue !", autoBtn: "⚡ Tout Tirer",
-                labels: { area: "Superficie", pop: "Population", density: "Densité", army: "Armée (% / Soldats)", hdi: "IDH", gdpCap: "PIB / hab.", gdpTotal: "PIB Total", party: "Parti Politique", leader: "Leader", culture: "Culture", simHist: "Similaire (Histoire)", simCurr: "Similaire (Actuel)", finalName: "Nom de la Nation (Final)" },
-                compTitle: "📊 Comparaison vs ", askPlaceholder: "Rechercher sur Wikipédia..."
-            },
-            en: {
-                compare: "Compare to:", lang: "Language:",
-                steps: ["Area", "Population", "Soldier Ratio", "HDI", "GDP per cap.", "Political Party", "Leader", "Culture", "Name & Flag"],
-                spinBtn: "Spin Wheel!", autoBtn: "⚡ Auto Spin",
-                labels: { area: "Area", pop: "Population", density: "Density", army: "Army (% / Troops)", hdi: "HDI", gdpCap: "GDP per cap.", gdpTotal: "Total GDP", party: "Party", leader: "Leader", culture: "Culture", simHist: "Similar (Historical)", simCurr: "Similar (Modern)", finalName: "Nation Name (Final)" },
-                compTitle: "📊 Comparison vs ", askPlaceholder: "Search Wikipedia..."
-            },
-            ru: {
-                compare: "Сравнить с:", lang: "Язык:",
-                steps: ["Площадь", "Население", "% Солдат", "ИЧР", "ВВП на душу", "Партия", "Лидер", "Культура", "Имя и Флаг"],
-                spinBtn: "Крутить колесо!", autoBtn: "⚡ Авто",
-                labels: { area: "Площадь", pop: "Население", density: "Плотность", army: "Армия (% / Солдаты)", hdi: "ИЧР", gdpCap: "ВВП на душу", gdpTotal: "Общий ВВП", party: "Партия", leader: "Лидер", culture: "Культура", simHist: "Аналог (История)", simCurr: "Аналог (Совр.)", finalName: "Название нации" },
-                compTitle: "📊 Сравнение с ", askPlaceholder: "Искать в Википедии..."
-            },
-            zh: {
-                compare: "对比国家：", lang: "语言：",
-                steps: ["面积", "人口", "军人比例", "人类发展指数", "人均GDP", "政党", "领袖", "文化", "国名与国旗"],
-                spinBtn: "旋转转盘！", autoBtn: "⚡ 自动抽取",
-                labels: { area: "面积", pop: "人口", density: "人口密度", army: "军队 (% / 士兵)", hdi: "HDI", gdpCap: "人均GDP", gdpTotal: "总GDP", party: "政党", leader: "领袖", culture: "文化", simHist: "相似 (历史)", simCurr: "相似 (现代)", finalName: "国家名称" },
-                compTitle: "📊 对比 ", askPlaceholder: "在维基百科搜索..."
-            },
-            ja: {
-                compare: "比較対象：", lang: "言語：",
-                steps: ["面積", "人口", "兵士比率", "HDI", "一人当たりGDP", "政党", "リーダー", "文化", "国名と国旗"],
-                spinBtn: "ルーレットを回す！", autoBtn: "⚡ 自動回転",
-                labels: { area: "面積", pop: "人口", density: "人口密度", army: "軍隊 (% / 兵士)", hdi: "HDI", gdpCap: "一人当たりGDP", gdpTotal: "GDP合計", party: "政党", leader: "指導者", culture: "文化", simHist: "類似 (歴史)", simCurr: "類似 (現代)", finalName: "国家名" },
-                compTitle: "📊 比較：", askPlaceholder: "Wikipediaで検索..."
-            }
-        };
-
-        let currentLang = "fr";
-        const prefixes = ["Val", "Ar", "Bel", "Kael", "Nov", "Zor", "Ond", "Eld", "Mar", "Sol", "Vanguard", "Aethel"];
-        const suffixes = ["ia", "is", "oria", "gard", "onia", "vane", "terra", "mire", "stan", "dor"];
-        
         const politicalData = [
-            { party: "Fascisme", leaders: ["Adolf Hitler", "Benito Mussolini", "Philippe Pétain", "Francisco Franco"], culture: "Militarisme Radical", symbol: "fasces", bgColors: ["#800000", "#111111", "#dddddd"], histCountries: ["Allemagne Nazie", "Italie Fasciste"], currCountries: ["Corée du Nord", "Érythrée"] },
-            { party: "Communisme", leaders: ["Vladimir Lénine", "Joseph Staline", "Mao Zedong", "Fidel Castro"], culture: "Collectivisme d'État", symbol: "hammer_sickle", bgColors: ["#cc0000", "#dd0000", "#ffcc00"], histCountries: ["URSS", "RDA"], currCountries: ["Chine", "Cuba"] },
-            { party: "Démocratie Libérale", leaders: ["Franklin D. Roosevelt", "Winston Churchill", "Charles de Gaulle", "J.F. Kennedy"], culture: "Libéralisme & Marché", symbol: "star", bgColors: ["#003399", "#ffffff", "#cc0000"], histCountries: ["République Romaine", "USA (XXe)"], currCountries: ["États-Unis", "France"] },
-            { party: "Monarchie Absolue", leaders: ["Louis XIV", "Napoléon Ier", "Jules César", "Pierre le Grand"], culture: "Tradition Impériale", symbol: "crown", bgColors: ["#4b0082", "#ffd700", "#ffffff"], histCountries: ["Empire Français", "Empire Russe"], currCountries: ["Arabie Saoudite", "Oman"] },
-            { party: "Social-Démocratie", leaders: ["Olof Palme", "Clement Attlee", "Willy Brandt", "Nelson Mandela"], culture: "État-Providence", symbol: "rose", bgColors: ["#e63946", "#ffffff", "#1d3557"], histCountries: ["Suède (Palme)", "Autriche Rouge"], currCountries: ["Suède", "Norvège"] },
-            { party: "Théocratie", leaders: ["Ruhollah Khomeini", "Innocent III", "Savonarole", "Pape Pie XII"], culture: "Loi Sacrée", symbol: "cross", bgColors: ["#006633", "#ffffff", "#ffd700"], histCountries: ["États Pontificaux", "Califat Abbaside"], currCountries: ["Iran", "Vatican"] },
-            { party: "Anarchisme", leaders: ["Nestor Makhno", "Bakounine", "Durruti", "Emma Goldman"], culture: "Autogestion Libre", symbol: "anarchy", bgColors: ["#111111", "#cc0000", "#222222"], histCountries: ["Catalogne (1936)", "Commune de Paris"], currCountries: ["Rojava", "Chiapas"] },
-            { party: "Écologisme", leaders: ["René Dumont", "Petra Kelly", "Wangari Maathai", "Gro Harlem"], culture: "Éco-Responsabilité", symbol: "leaf", bgColors: ["#2a9d8f", "#e9c46a", "#264653"], histCountries: ["Communautés Vertes 80s"], currCountries: ["Costa Rica", "Bhoutan"] },
-            { party: "Monarchie Constitutionnelle", leaders: ["Reine Victoria", "Meiji", "Juan Carlos I", "Albert Ier"], culture: "Parlementarisme & Tradition", symbol: "royal_shield", bgColors: ["#002060", "#c55a11", "#ffffff"], histCountries: ["Empire Britannique", "Royaume de Prusse"], currCountries: ["Royaume-Uni", "Japon"] },
-            { party: "Technocratie", leaders: ["Howard Scott", "Marion King Hubbert", "Elon Musk", "Alexander Bogdanov"], culture: "Efficacité Scientifique", symbol: "atom", bgColors: ["#008080", "#101010", "#00ffff"], histCountries: ["Projet CyberSyn (Chili)", "Technocracy Inc."], currCountries: ["Singapour", "Estonie"] },
-            { party: "Corporatisme / Oligarchie", leaders: ["John D. Rockefeller", "Andrew Carnegie", "J.P. Morgan", "Cecil Rhodes"], culture: "Capitalisme d'Élite", symbol: "diamond", bgColors: ["#1e2d24", "#d4af37", "#0f0f0f"], histCountries: ["République de Venise", "Compagnie des Indes"], currCountries: ["Émirats Arabes Unis", "Hong Kong"] },
-            { party: "Stratocratie (Junte)", leaders: ["Augusto Pinochet", "Min Myanmar", "Park Chung-hee", "Suharto"], culture: "Ordre & Discipline Strict", symbol: "swords", bgColors: ["#355e3b", "#000000", "#8b0000"], histCountries: ["Sparte Antique", "Gouvernement Militaire Coréen"], currCountries: ["Birmanie (Myanmar)", "Mali"] }
+            { party: "Fascisme", leaders: ["Adolf Hitler", "Benito Mussolini", "Francisco Franco"], culture: "Militarisme Radical", symbol: "fasces", bgColors: ["#800000", "#111111", "#dddddd"], histCountries: ["Allemagne Nazie", "Italie Fasciste"], currCountries: ["Corée du Nord", "Érythrée"] },
+            { party: "Communisme", leaders: ["Vladimir Lénine", "Joseph Staline", "Mao Zedong"], culture: "Collectivisme d'État", symbol: "hammer_sickle", bgColors: ["#cc0000", "#dd0000", "#ffcc00"], histCountries: ["URSS", "RDA"], currCountries: ["Chine", "Cuba"] },
+            { party: "Démocratie Libérale", leaders: ["Franklin D. Roosevelt", "Winston Churchill", "Charles de Gaulle"], culture: "Libéralisme & Marché", symbol: "star", bgColors: ["#003399", "#ffffff", "#cc0000"], histCountries: ["République Romaine", "USA (XXe)"], currCountries: ["États-Unis", "France"] },
+            { party: "Monarchie Absolue", leaders: ["Louis XIV", "Napoléon Ier", "Pierre le Grand"], culture: "Tradition Impériale", symbol: "crown", bgColors: ["#4b0082", "#ffd700", "#ffffff"], histCountries: ["Empire Français", "Empire Russe"], currCountries: ["Arabie Saoudite", "Oman"] },
+            { party: "Social-Démocratie", leaders: ["Olof Palme", "Willy Brandt", "Nelson Mandela"], culture: "État-Providence", symbol: "rose", bgColors: ["#e63946", "#ffffff", "#1d3557"], histCountries: ["Suède (Palme)", "Autriche Rouge"], currCountries: ["Suède", "Norvège"] },
+            { party: "Théocratie", leaders: ["Ruhollah Khomeini", "Innocent III", "Savonarole"], culture: "Loi Sacrée", symbol: "cross", bgColors: ["#006633", "#ffffff", "#ffd700"], histCountries: ["États Pontificaux", "Califat Abbaside"], currCountries: ["Iran", "Vatican"] },
+            { party: "Technocratie", leaders: ["Howard Scott", "Elon Musk", "Alexander Bogdanov"], culture: "Efficacité Scientifique", symbol: "atom", bgColors: ["#008080", "#101010", "#00ffff"], histCountries: ["Projet CyberSyn", "Technocracy Inc."], currCountries: ["Singapour", "Estonie"] }
         ];
 
+        let currentLang = "fr";
+        let activeMode = "wheel"; // 'wheel' ou 'manual'
         let currentStepIndex = 0;
         let isSpinning = false;
         let currentCountry = {};
         let currentWheelOptions = [];
 
+        // Remplir la sélection du formulaire manuel
+        const selectPartyElem = document.getElementById('m-party');
+        politicalData.forEach((p, idx) => {
+            let opt = document.createElement('option');
+            opt.value = idx; opt.innerText = p.party;
+            selectPartyElem.appendChild(opt);
+        });
+
+        function switchMode(mode) {
+            activeMode = mode;
+            if (mode === 'wheel') {
+                document.getElementById('btnModeWheel').classList.add('active');
+                document.getElementById('btnModeManual').classList.remove('active');
+                document.getElementById('wheelSection').style.display = 'block';
+                document.getElementById('wheelBtnGroup').style.display = 'flex';
+                document.getElementById('manualSection').style.display = 'none';
+            } else {
+                document.getElementById('btnModeManual').classList.add('active');
+                document.getElementById('btnModeWheel').classList.remove('active');
+                document.getElementById('wheelSection').style.display = 'none';
+                document.getElementById('wheelBtnGroup').style.display = 'none';
+                document.getElementById('manualSection').style.display = 'grid';
+                applyManualConfig();
+            }
+        }
+
+        function applyManualConfig() {
+            if (activeMode !== 'manual') return;
+
+            const name = document.getElementById('m-name').value;
+            const area = parseFloat(document.getElementById('m-area').value) || 0;
+            const pop = parseFloat(document.getElementById('m-pop').value) || 0;
+            const gdpCap = parseFloat(document.getElementById('m-gdp-cap').value) || 0;
+            const armyRatio = parseFloat(document.getElementById('m-army').value) || 0;
+            const hdi = parseFloat(document.getElementById('m-hdi').value) || 0;
+            const partyIdx = document.getElementById('m-party').value;
+            const partyObj = politicalData[partyIdx];
+            const leader = document.getElementById('m-leader').value;
+            const culture = document.getElementById('m-culture').value;
+
+            const density = area > 0 ? (pop / area).toFixed(1) : 0;
+            const soldiers = Math.floor(pop * (armyRatio / 100));
+            const totalGdp = BigInt(Math.floor(pop)) * BigInt(Math.floor(gdpCap));
+
+            currentCountry = {
+                name, area, pop, density, gdpCap, armyRatio, soldiers, hdi, totalGdp,
+                partyObj, party: partyObj.party, leader, culture,
+                simHist: partyObj.histCountries[0],
+                simCurr: partyObj.currCountries[0]
+            };
+
+            // Mettre à jour l'affichage UI
+            document.getElementById('c-area').innerText = `${area.toLocaleString('fr-FR')} km²`;
+            document.getElementById('c-pop').innerText = `${(pop/1000000).toFixed(1)}M hab.`;
+            document.getElementById('c-density').innerText = `${density} hab/km²`;
+            document.getElementById('c-army').innerText = `${armyRatio}% (${soldiers.toLocaleString('fr-FR')} sold.)`;
+            document.getElementById('c-hdi').innerText = hdi.toFixed(3);
+            document.getElementById('c-gdp-cap').innerText = `${gdpCap.toLocaleString('fr-FR')} $`;
+            document.getElementById('c-gdp-total').innerText = `${Number(totalGdp).toLocaleString('fr-FR')} $`;
+            document.getElementById('c-party').innerText = partyObj.party;
+            document.getElementById('c-leader').innerText = leader;
+            document.getElementById('c-culture').innerText = culture;
+            document.getElementById('c-sim-hist').innerText = currentCountry.simHist;
+            document.getElementById('c-sim-curr').innerText = currentCountry.simCurr;
+            document.getElementById('c-name').innerText = name;
+
+            drawCustomFlag(partyObj);
+            updateComparison();
+        }
+
+        const prefixes = ["Val", "Ar", "Bel", "Kael", "Nov", "Zor", "Ond", "Eld", "Mar", "Sol"];
+        const suffixes = ["ia", "is", "oria", "gard", "onia", "vane", "terra", "mire", "stan"];
+
         function getStepKey() {
-            const keys = ["area", "pop", "armyRatio", "hdi", "gdpCap", "party", "leader", "culture", "final"];
-            return keys[currentStepIndex];
+            return ["area", "pop", "armyRatio", "hdi", "gdpCap", "party", "leader", "culture", "final"][currentStepIndex];
         }
 
         function getWheelOptionsForStep(stepKey) {
@@ -585,23 +505,16 @@
             for (let i = 0; i < options.length; i++) {
                 ctx.beginPath();
                 ctx.fillStyle = wheelColors[i % wheelColors.length];
-                ctx.moveTo(90, 90);
-                ctx.arc(90, 90, 90, i * slice, (i + 1) * slice);
-                ctx.fill();
-
-                ctx.save();
-                ctx.translate(90, 90);
-                ctx.rotate(i * slice + slice / 2);
-                ctx.fillStyle = "#fff";
-                ctx.font = "bold 8px sans-serif";
-                ctx.fillText(options[i].text.substring(0, 13), 25, 3);
-                ctx.restore();
+                ctx.moveTo(90, 90); ctx.arc(90, 90, 90, i * slice, (i + 1) * slice); ctx.fill();
+                ctx.save(); ctx.translate(90, 90); ctx.rotate(i * slice + slice / 2);
+                ctx.fillStyle = "#fff"; ctx.font = "bold 8px sans-serif";
+                ctx.fillText(options[i].text.substring(0, 13), 25, 3); ctx.restore();
             }
         }
 
         function updateStepWheel() {
-            const stepName = i18n[currentLang].steps[currentStepIndex];
-            document.getElementById('wheelTitle').innerText = `${i18n[currentLang].spinBtn.replace('!', '')} : ${stepName}`;
+            const stepNames = ["Superficie", "Population", "Taux de Soldats", "IDH", "PIB / hab.", "Parti Politique", "Leader", "Culture", "Nom & Drapeau"];
+            document.getElementById('wheelTitle').innerText = `Tourner pour : ${stepNames[currentStepIndex]}`;
             currentWheelOptions = getWheelOptionsForStep(getStepKey());
             drawWheel(currentWheelOptions);
         }
@@ -610,45 +523,21 @@
             const canvas = document.getElementById('flagCanvas');
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (!partyObj) { ctx.fillStyle = "#222"; ctx.fillRect(0, 0, canvas.width, canvas.height); return; }
 
-            if (!partyObj) {
-                ctx.fillStyle = "#222"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                return;
-            }
+            let colors = partyObj.bgColors; let w = canvas.width / 3;
+            for (let i = 0; i < 3; i++) { ctx.fillStyle = colors[i]; ctx.fillRect(i * w, 0, w, canvas.height); }
 
-            let colors = partyObj.bgColors;
-            let w = canvas.width / 3;
-            for (let i = 0; i < 3; i++) {
-                ctx.fillStyle = colors[i]; ctx.fillRect(i * w, 0, w, canvas.height);
-            }
-
-            let cx = canvas.width / 2; let cy = canvas.height / 2;
+            let cx = canvas.width / 2, cy = canvas.height / 2;
             ctx.fillStyle = "#ffd700"; ctx.strokeStyle = "#111"; ctx.lineWidth = 3;
+            ctx.font = "bold 45px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
 
-            if (partyObj.symbol === "fasces") {
-                ctx.fillRect(cx - 5, cy - 30, 10, 60);
-                ctx.beginPath(); ctx.arc(cx - 10, cy, 18, Math.PI * 1.5, Math.PI * 0.5); ctx.fill(); ctx.stroke();
-            } else if (partyObj.symbol === "hammer_sickle") {
-                ctx.font = "bold 45px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("☭", cx, cy);
-            } else if (partyObj.symbol === "star") {
-                ctx.font = "bold 50px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("★", cx, cy);
-            } else if (partyObj.symbol === "crown") {
-                ctx.font = "bold 45px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("👑", cx, cy);
-            } else if (partyObj.symbol === "cross") {
-                ctx.fillRect(cx - 6, cy - 30, 12, 60); ctx.fillRect(cx - 25, cy - 12, 50, 12);
-            } else if (partyObj.symbol === "anarchy") {
-                ctx.font = "bold 45px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("Ⓐ", cx, cy);
-            } else if (partyObj.symbol === "royal_shield") {
-                ctx.font = "bold 45px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("🛡️", cx, cy);
-            } else if (partyObj.symbol === "atom") {
-                ctx.font = "bold 45px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("⚛️", cx, cy);
-            } else if (partyObj.symbol === "diamond") {
-                ctx.font = "bold 45px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("💎", cx, cy);
-            } else if (partyObj.symbol === "swords") {
-                ctx.font = "bold 45px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("⚔️", cx, cy);
-            } else {
-                ctx.font = "bold 45px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("🌿", cx, cy);
-            }
+            if (partyObj.symbol === "fasces") ctx.fillText("🪓", cx, cy);
+            else if (partyObj.symbol === "hammer_sickle") ctx.fillText("☭", cx, cy);
+            else if (partyObj.symbol === "star") ctx.fillText("★", cx, cy);
+            else if (partyObj.symbol === "crown") ctx.fillText("👑", cx, cy);
+            else if (partyObj.symbol === "cross") ctx.fillText("✝️", cx, cy);
+            else ctx.fillText("⚛️", cx, cy);
         }
 
         function spinNextStep() {
@@ -660,71 +549,47 @@
             const wheel = document.getElementById('wheel');
             const selectedIndex = Math.floor(Math.random() * currentWheelOptions.length);
             const sliceDeg = 360 / currentWheelOptions.length;
-            
             const targetDeg = 1440 + (360 - (selectedIndex * sliceDeg + sliceDeg/2));
+
             wheel.style.transform = `rotate(${targetDeg}deg)`;
 
             setTimeout(() => {
                 const result = currentWheelOptions[selectedIndex];
-
-                if (stepKey === "area") {
-                    currentCountry.area = result.value;
-                    document.getElementById('c-area').innerText = result.text;
-                    calculateDensity();
-                } else if (stepKey === "pop") {
-                    currentCountry.pop = result.value;
-                    document.getElementById('c-pop').innerText = result.text;
-                    calculateDensity();
-                } else if (stepKey === "armyRatio") {
+                if (stepKey === "area") { currentCountry.area = result.value; document.getElementById('c-area').innerText = result.text; calculateDensity(); }
+                else if (stepKey === "pop") { currentCountry.pop = result.value; document.getElementById('c-pop').innerText = result.text; calculateDensity(); }
+                else if (stepKey === "armyRatio") {
                     currentCountry.armyRatio = result.value;
                     if (currentCountry.pop) {
                         let soldiers = Math.floor(currentCountry.pop * (currentCountry.armyRatio / 100));
                         currentCountry.soldiers = soldiers;
                         document.getElementById('c-army').innerText = `${currentCountry.armyRatio}% (${soldiers.toLocaleString('fr-FR')} sold.)`;
                     }
-                } else if (stepKey === "hdi") {
-                    currentCountry.hdi = result.value;
-                    document.getElementById('c-hdi').innerText = result.text;
-                } else if (stepKey === "gdpCap") {
-                    currentCountry.gdpCap = result.value;
-                    document.getElementById('c-gdp-cap').innerText = result.text;
+                } else if (stepKey === "hdi") { currentCountry.hdi = result.value; document.getElementById('c-hdi').innerText = result.text; }
+                else if (stepKey === "gdpCap") {
+                    currentCountry.gdpCap = result.value; document.getElementById('c-gdp-cap').innerText = result.text;
                     if (currentCountry.pop) {
                         let total = BigInt(currentCountry.pop) * BigInt(currentCountry.gdpCap);
-                        currentCountry.totalGdp = total;
-                        document.getElementById('c-gdp-total').innerText = Number(total).toLocaleString('fr-FR') + " $";
+                        currentCountry.totalGdp = total; document.getElementById('c-gdp-total').innerText = Number(total).toLocaleString('fr-FR') + " $";
                     }
-                } else if (stepKey === "party") {
-                    currentCountry.partyObj = result.value;
-                    currentCountry.party = result.value.party;
-                    document.getElementById('c-party').innerText = result.text;
-                } else if (stepKey === "leader") {
-                    currentCountry.leader = result.value;
-                    document.getElementById('c-leader').innerText = result.text;
-                } else if (stepKey === "culture") {
-                    currentCountry.culture = result.value;
-                    document.getElementById('c-culture').innerText = result.text;
-                } else if (stepKey === "final") {
+                } else if (stepKey === "party") { currentCountry.partyObj = result.value; currentCountry.party = result.value.party; document.getElementById('c-party').innerText = result.text; }
+                else if (stepKey === "leader") { currentCountry.leader = result.value; document.getElementById('c-leader').innerText = result.text; }
+                else if (stepKey === "culture") { currentCountry.culture = result.value; document.getElementById('c-culture').innerText = result.text; }
+                else if (stepKey === "final") {
                     currentCountry.name = result.value;
                     document.getElementById('c-name').innerText = currentCountry.name;
                     drawCustomFlag(currentCountry.partyObj);
-
                     const pData = currentCountry.partyObj || politicalData[0];
-                    currentCountry.simHist = pData.histCountries[Math.floor(Math.random() * pData.histCountries.length)];
-                    currentCountry.simCurr = pData.currCountries[Math.floor(Math.random() * pData.currCountries.length)];
-
+                    currentCountry.simHist = pData.histCountries[0];
+                    currentCountry.simCurr = pData.currCountries[0];
                     document.getElementById('c-sim-hist').innerText = currentCountry.simHist;
                     document.getElementById('c-sim-curr').innerText = currentCountry.simCurr;
-
                     updateComparison();
                 }
 
-                wheel.style.transition = 'none';
-                wheel.style.transform = 'rotate(0deg)';
+                wheel.style.transition = 'none'; wheel.style.transform = 'rotate(0deg)';
                 setTimeout(() => { wheel.style.transition = 'transform 2.5s cubic-bezier(0.15, 0.99, 0.18, 1)'; }, 50);
-
                 currentStepIndex = (currentStepIndex + 1) % 9;
                 updateStepWheel();
-
                 isSpinning = false;
                 document.getElementById('btnSpin').disabled = false;
             }, 2500);
@@ -733,11 +598,7 @@
         function generateAllWithWheelAnimation() {
             let i = 0;
             function autoSpin() {
-                if (i < 9) {
-                    spinNextStep();
-                    i++;
-                    setTimeout(autoSpin, 2800);
-                }
+                if (i < 9) { spinNextStep(); i++; setTimeout(autoSpin, 2800); }
             }
             autoSpin();
         }
@@ -745,21 +606,26 @@
         function updateComparison() {
             const selectedReal = document.getElementById('selectRealCountry').value;
             const real = realCountriesData[selectedReal];
+            document.getElementById('compTitle').innerText = `📊 Comparaison vs ${selectedReal}`;
 
-            document.getElementById('compTitle').innerText = `${i18n[currentLang].compTitle} ${selectedReal}`;
-
-            if (!currentCountry.pop) {
-                document.getElementById('comp-pop').innerHTML = `Population : <span>-</span>`;
-                document.getElementById('comp-gdp').innerHTML = `PIB Total : <span>-</span>`;
-                document.getElementById('comp-army').innerHTML = `Armée : <span>-</span>`;
-                document.getElementById('comp-area').innerHTML = `Superficie : <span>-</span>`;
-                document.getElementById('comp-hdi').innerHTML = `IDH : <span>-</span>`;
-                return;
-            }
+            if (!currentCountry.pop) return;
 
             let popDiff = (currentCountry.pop / real.pop).toFixed(1);
             let popTxt = popDiff >= 1 ? `${popDiff}x plus grand` : `${(1/popDiff).toFixed(1)}x plus petit`;
             document.getElementById('comp-pop').innerHTML = `Population : <span>${popTxt}</span> (${(currentCountry.pop/1000000).toFixed(1)}M vs ${(real.pop/1000000).toFixed(1)}M)`;
+
+            if (currentCountry.area) {
+                let areaDiff = (currentCountry.area / real.area).toFixed(1);
+                let areaTxt = areaDiff >= 1 ? `${areaDiff}x plus vaste` : `${(1/areaDiff).toFixed(1)}x plus petit`;
+                document.getElementById('comp-area').innerHTML = `Superficie : <span>${areaTxt}</span> (${currentCountry.area.toLocaleString('fr-FR')} vs ${real.area.toLocaleString('fr-FR')} km²)`;
+            }
+
+            if (currentCountry.density) {
+                let realDensity = (real.pop / real.area).toFixed(1);
+                let denDiff = (currentCountry.density / realDensity).toFixed(1);
+                let denTxt = denDiff >= 1 ? `${denDiff}x plus dense` : `${(1/denDiff).toFixed(1)}x moins dense`;
+                document.getElementById('comp-density').innerHTML = `Densité : <span>${denTxt}</span> (${currentCountry.density} vs ${realDensity} hab/km²)`;
+            }
 
             if (currentCountry.totalGdp) {
                 let gdpDiff = (Number(currentCountry.totalGdp) / real.gdp).toFixed(1);
@@ -773,12 +639,6 @@
                 document.getElementById('comp-army').innerHTML = `Armée : <span>${armyTxt}</span>`;
             }
 
-            if (currentCountry.area) {
-                let areaDiff = (currentCountry.area / real.area).toFixed(1);
-                let areaTxt = areaDiff >= 1 ? `${areaDiff}x plus vaste` : `${(1/areaDiff).toFixed(1)}x plus petit`;
-                document.getElementById('comp-area').innerHTML = `Superficie : <span>${areaTxt}</span>`;
-            }
-
             if (currentCountry.hdi) {
                 let hdiDiff = (currentCountry.hdi - real.hdi).toFixed(3);
                 let hdiTxt = hdiDiff >= 0 ? `+${hdiDiff} supérieur` : `${hdiDiff} inférieur`;
@@ -786,34 +646,7 @@
             }
         }
 
-        function changeLanguage() {
-            currentLang = document.getElementById('selectLang').value;
-            const t = i18n[currentLang];
-
-            document.getElementById('lbl-compare').innerText = t.compare;
-            document.getElementById('lbl-lang').innerText = t.lang;
-            document.getElementById('btnSpin').innerText = t.spinBtn;
-            document.getElementById('btnFullAuto').innerText = t.autoBtn;
-
-            document.getElementById('lbl-area').innerText = t.labels.area;
-            document.getElementById('lbl-pop').innerText = t.labels.pop;
-            document.getElementById('lbl-density').innerText = t.labels.density;
-            document.getElementById('lbl-army').innerText = t.labels.army;
-            document.getElementById('lbl-hdi').innerText = t.labels.hdi;
-            document.getElementById('lbl-gdp-cap').innerText = t.labels.gdpCap;
-            document.getElementById('lbl-gdp-total').innerText = t.labels.gdpTotal;
-            document.getElementById('lbl-party').innerText = t.labels.party;
-            document.getElementById('lbl-leader').innerText = t.labels.leader;
-            document.getElementById('lbl-culture').innerText = t.labels.culture;
-            document.getElementById('lbl-sim-hist').innerText = t.labels.simHist;
-            document.getElementById('lbl-sim-curr').innerText = t.labels.simCurr;
-            document.getElementById('lbl-final-name').innerText = t.labels.finalName;
-            document.getElementById('chatInput').placeholder = t.askPlaceholder;
-
-            updateStepWheel();
-            updateComparison();
-        }
-
+        // CHATBOT ET EXPLICATION COMPLETE
         async function askIA() {
             const input = document.getElementById('chatInput');
             const query = input.value.trim();
@@ -822,35 +655,42 @@
             const chatLogs = document.getElementById('chatLogs');
             chatLogs.innerHTML += `<div class="chat-msg user">❓ ${query}</div>`;
             input.value = "";
-
             chatLogs.scrollTop = chatLogs.scrollHeight;
 
             const name = currentCountry.name || "";
+            // Si la question concerne le pays actuellement créé
             if (name && query.toLowerCase().includes(name.toLowerCase())) {
                 setTimeout(() => {
-                    chatLogs.innerHTML += `<div class="chat-msg ia">🤖 <b>${name}</b> : Dirigé par ${currentCountry.leader || 'son leader'} (${currentCountry.party || 'régime'}), ce pays compte ${(currentCountry.pop/1000000 || 0).toFixed(1)}M d'habitants pour une densité de ${currentCountry.density || '-'} hab/km².</div>`;
+                    const fullDescription = `🤖 <b>Fiche Complète de ${name} :</b><br>` +
+                        `• <b>Superficie :</b> ${currentCountry.area ? currentCountry.area.toLocaleString('fr-FR') + ' km²' : '-'}<br>` +
+                        `• <b>Population :</b> ${(currentCountry.pop/1000000 || 0).toFixed(1)} Millions<br>` +
+                        `• <b>Densité :</b> ${currentCountry.density || '-'} hab/km²<br>` +
+                        `• <b>PIB par habitant :</b> ${currentCountry.gdpCap ? currentCountry.gdpCap.toLocaleString('fr-FR') + ' $' : '-'}<br>` +
+                        `• <b>PIB Total :</b> ${currentCountry.totalGdp ? Number(currentCountry.totalGdp).toLocaleString('fr-FR') + ' $' : '-'}<br>` +
+                        `• <b>Armée active :</b> ${currentCountry.armyRatio}% (${currentCountry.soldiers ? currentCountry.soldiers.toLocaleString('fr-FR') : '-'} soldats)<br>` +
+                        `• <b>IDH :</b> ${currentCountry.hdi || '-'}<br>` +
+                        `• <b>Régime politique :</b> ${currentCountry.party || '-'}<br>` +
+                        `• <b>Leader :</b> ${currentCountry.leader || '-'}<br>` +
+                        `• <b>Culture :</b> ${currentCountry.culture || '-'}<br>` +
+                        `• <b>Équivalents réels :</b> ${currentCountry.simHist} (Histoire) | ${currentCountry.simCurr} (Actuel)`;
+                    chatLogs.innerHTML += `<div class="chat-msg ia">${fullDescription}</div>`;
                     chatLogs.scrollTop = chatLogs.scrollHeight;
-                }, 500);
+                }, 400);
                 return;
             }
 
+            // Sinon recherche sur Wikipédia
             chatLogs.innerHTML += `<div class="chat-msg ia">🔍 <i>Recherche sur Wikipédia...</i></div>`;
             chatLogs.scrollTop = chatLogs.scrollHeight;
 
             try {
                 const wikiLang = currentLang || "fr";
                 const response = await fetch(`https://${wikiLang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`);
-                
                 if (response.ok) {
                     const data = await response.json();
-                    if (data.extract) {
-                        chatLogs.innerHTML += `<div class="chat-msg ia">📚 <b>Wikipédia (${data.title}) :</b> ${data.extract}</div>`;
-                    } else {
-                        chatLogs.innerHTML += `<div class="chat-msg ia">⚠️ Aucun article Wikipédia trouvé pour "${query}".</div>`;
-                    }
-                } else {
-                    chatLogs.innerHTML += `<div class="chat-msg ia">⚠️ Introuvable sur Wikipédia. Essaie avec un mot-clé plus précis (ex: "France", "Démocratie", "Napoléon").</div>`;
-                }
+                    if (data.extract) chatLogs.innerHTML += `<div class="chat-msg ia">📚 <b>Wikipédia (${data.title}) :</b> ${data.extract}</div>`;
+                    else chatLogs.innerHTML += `<div class="chat-msg ia">⚠️ Aucun article trouvé pour "${query}".</div>`;
+                } else chatLogs.innerHTML += `<div class="chat-msg ia">⚠️ Introuvable sur Wikipédia.</div>`;
             } catch (err) {
                 chatLogs.innerHTML += `<div class="chat-msg ia">❌ Erreur de connexion avec Wikipédia.</div>`;
             }
