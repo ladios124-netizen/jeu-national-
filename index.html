@@ -75,7 +75,6 @@
             z-index: 10;
         }
 
-        /* Canvas Drapeau personnalisé avec symbole */
         canvas#flagCanvas {
             width: 100%;
             height: 140px;
@@ -128,7 +127,6 @@
         </div>
 
         <div id="normalView">
-            <!-- Drapeau Canvas -->
             <canvas id="flagCanvas" width="300" height="150"></canvas>
 
             <div class="grid-stats">
@@ -140,6 +138,11 @@
                 <div class="info-group"><div class="label">Parti Politique</div><div class="value" id="c-party">-</div></div>
                 <div class="info-group"><div class="label">Leader Historique</div><div class="value" id="c-leader">-</div></div>
                 <div class="info-group full"><div class="label">Culture</div><div class="value" id="c-culture">-</div></div>
+                
+                <!-- Nouveaux champs pour les pays similaires -->
+                <div class="info-group"><div class="label">Pays Historique Similaire</div><div class="value" id="c-sim-hist" style="color:#f4a261;">-</div></div>
+                <div class="info-group"><div class="label">Pays Actuel Similaire</div><div class="value" id="c-sim-curr" style="color:#2a9d8f;">-</div></div>
+
                 <div class="info-group full" style="border: 1px solid #7f5af0;"><div class="label" style="color: #7f5af0;">Nom de la Nation (Final)</div><div class="value" id="c-name" style="font-size: 1.2rem; color: #2cb67d;">???</div></div>
             </div>
             
@@ -161,15 +164,64 @@
         const prefixes = ["Val", "Ar", "Bel", "Kael", "Nov", "Zor", "Ond", "Eld", "Mar", "Sol", "Vanguard", "Aethel"];
         const suffixes = ["ia", "is", "oria", "gard", "onia", "vane", "terra", "mire", "stan", "dor"];
         
+        // Données complètes incluant 8 leaders + Pays historiques & actuels similaires
         const politicalData = [
-            { party: "Fascisme / Nazisme", leaders: ["Adolf Hitler", "Benito Mussolini", "Philippe Pétain", "Francisco Franco", "Oswald Mosley", "Ante Pavelić", "Miklos Horthy", "Ion Antonescu"], culture: "Militarisme Radical", symbol: "fasces", bgColors: ["#800000", "#111111", "#dddddd"] },
-            { party: "Communisme", leaders: ["Vladimir Lénine", "Joseph Staline", "Mao Zedong", "Fidel Castro", "Ho Chi Minh", "Josip Broz Tito", "Enver Hoxha", "Thomas Sankara"], culture: "Collectivisme d'État", symbol: "hammer_sickle", bgColors: ["#cc0000", "#dd0000", "#ffcc00"] },
-            { party: "Démocratie Libérale", leaders: ["Franklin D. Roosevelt", "Winston Churchill", "Charles de Gaulle", "John F. Kennedy", "Margaret Thatcher", "Ronald Reagan", "Konrad Adenauer", "Dwight Eisenhower"], culture: "Libéralisme & Marché", symbol: "star", bgColors: ["#003399", "#ffffff", "#cc0000"] },
-            { party: "Monarchie Absolue", leaders: ["Louis XIV", "Napoléon Ier", "Chaka Zoulou", "Alexandre le Grand", "Jules César", "Pierre le Grand", "Empereur Meiji", "Suleiman Ier"], culture: "Tradition Impériale", symbol: "crown", bgColors: ["#4b0082", "#ffd700", "#ffffff"] },
-            { party: "Social-Démocratie", leaders: ["Olof Palme", "Clement Attlee", "Willy Brandt", "Jean Jaurès", "Léon Blum", "Sandro Pertini", "Michael Savage", "Nelson Mandela"], culture: "État-Providence", symbol: "rose", bgColors: ["#e63946", "#ffffff", "#1d3557"] },
-            { party: "Théocratie", leaders: ["Ruhollah Khomeini", "Innocent III", "Girolamo Savonarole", "Hong Xiuquan", "Umar ibn al-Khattâb", "Ismail Ier", "Jan van Leiden", "Pape Pie XII"], culture: "Loi Sacrée", symbol: "cross", bgColors: ["#006633", "#ffffff", "#ffd700"] },
-            { party: "Anarchisme", leaders: ["Nestor Makhno", "Pierre-Joseph Proudhon", "Mikhail Bakounine", "Piotr Kropotkine", "Louise Michel", "Buenaventura Durruti", "Emma Goldman", "Errico Malatesta"], culture: "Autogestion Libre", symbol: "anarchy", bgColors: ["#111111", "#cc0000", "#222222"] },
-            { party: "Écologisme", leaders: ["René Dumont", "Petra Kelly", "Wangari Maathai", "Aldo Leopold", "Petra De Sutter", "Gro Harlem Brundtland", "E. F. Schumacher", "Chico Mendes"], culture: "Éco-Responsabilité", symbol: "leaf", bgColors: ["#2a9d8f", "#e9c46a", "#264653"] }
+            { 
+                party: "Fascisme / Nazisme", 
+                leaders: ["Adolf Hitler", "Benito Mussolini", "Philippe Pétain", "Francisco Franco", "Oswald Mosley", "Ante Pavelić", "Miklos Horthy", "Ion Antonescu"], 
+                culture: "Militarisme Radical", symbol: "fasces", bgColors: ["#800000", "#111111", "#dddddd"],
+                histCountries: ["Allemagne Nazie", "Italie Fasciste", "Régime de Vichy", "Espagne Franquiste"],
+                currCountries: ["Corée du Nord", "Érythrée", "Syrie (Régime Baas)"]
+            },
+            { 
+                party: "Communisme", 
+                leaders: ["Vladimir Lénine", "Joseph Staline", "Mao Zedong", "Fidel Castro", "Ho Chi Minh", "Josip Broz Tito", "Enver Hoxha", "Thomas Sankara"], 
+                culture: "Collectivisme d'État", symbol: "hammer_sickle", bgColors: ["#cc0000", "#dd0000", "#ffcc00"],
+                histCountries: ["URSS", "République Populaire de Chine (Mao)", "Yougoslavie", "RDA"],
+                currCountries: ["Chine", "Cuba", "Viêt Nam", "Laos"]
+            },
+            { 
+                party: "Démocratie Libérale", 
+                leaders: ["Franklin D. Roosevelt", "Winston Churchill", "Charles de Gaulle", "John F. Kennedy", "Margaret Thatcher", "Ronald Reagan", "Konrad Adenauer", "Dwight Eisenhower"], 
+                culture: "Libéralisme & Marché", symbol: "star", bgColors: ["#003399", "#ffffff", "#cc0000"],
+                histCountries: ["République Romaine", "États-Unis (XXe s.)", "IVe République (France)"],
+                currCountries: ["États-Unis", "France", "Allemagne", "Japon"]
+            },
+            { 
+                party: "Monarchie Absolue", 
+                leaders: ["Louis XIV", "Napoléon Ier", "Chaka Zoulou", "Alexandre le Grand", "Jules César", "Pierre le Grand", "Empereur Meiji", "Suleiman Ier"], 
+                culture: "Tradition Impériale", symbol: "crown", bgColors: ["#4b0082", "#ffd700", "#ffffff"],
+                histCountries: ["Empire Français", "Empire Russe", "Empire Ottoman", "Royaume de France"],
+                currCountries: ["Arabie Saoudite", "Brunéi", "Oman", "Eswatini"]
+            },
+            { 
+                party: "Social-Démocratie", 
+                leaders: ["Olof Palme", "Clement Attlee", "Willy Brandt", "Jean Jaurès", "Léon Blum", "Sandro Pertini", "Michael Savage", "Nelson Mandela"], 
+                culture: "État-Providence", symbol: "rose", bgColors: ["#e63946", "#ffffff", "#1d3557"],
+                histCountries: ["Suède (Ère Palme)", "Royaume-Uni (Attlee)", "Autriche Rouge"],
+                currCountries: ["Suède", "Norvège", "Danemark", "Finlande"]
+            },
+            { 
+                party: "Théocratie", 
+                leaders: ["Ruhollah Khomeini", "Innocent III", "Girolamo Savonarole", "Hong Xiuquan", "Umar ibn al-Khattâb", "Ismail Ier", "Jan van Leiden", "Pape Pie XII"], 
+                culture: "Loi Sacrée", symbol: "cross", bgColors: ["#006633", "#ffffff", "#ffd700"],
+                histCountries: ["États Pontificaux", "Califat Abbaside", "Florence de Savonarole"],
+                currCountries: ["Iran", "Vatican", "Afghanistan (Talibans)"]
+            },
+            { 
+                party: "Anarchisme", 
+                leaders: ["Nestor Makhno", "Pierre-Joseph Proudhon", "Mikhail Bakounine", "Piotr Kropotkine", "Louise Michel", "Buenaventura Durruti", "Emma Goldman", "Errico Malatesta"], 
+                culture: "Autogestion Libre", symbol: "anarchy", bgColors: ["#111111", "#cc0000", "#222222"],
+                histCountries: ["Catalogne Anarchiste (1936)", "Territoire Libre de Makhno", "Commune de Paris"],
+                currCountries: ["Rojava (Syrie du Nord)", "Zapatistes (Chiapas, Mexique)"]
+            },
+            { 
+                party: "Écologisme", 
+                leaders: ["René Dumont", "Petra Kelly", "Wangari Maathai", "Aldo Leopold", "Petra De Sutter", "Gro Harlem Brundtland", "E. F. Schumacher", "Chico Mendes"], 
+                culture: "Éco-Responsabilité", symbol: "leaf", bgColors: ["#2a9d8f", "#e9c46a", "#264653"],
+                histCountries: ["Nouvelle-Zélande (Politique Verte 1980)", "Communautés Écologiques Européennes"],
+                currCountries: ["Costa Rica", "Bhoutan", "Islande"]
+            }
         ];
 
         const steps = [
@@ -258,7 +310,6 @@
             drawWheel(currentWheelOptions);
         }
 
-        // DESSIN DYNAMIQUE DU DRAPEAU ET DU SYMBOLE
         function drawCustomFlag(partyObj) {
             const canvas = document.getElementById('flagCanvas');
             const ctx = canvas.getContext('2d');
@@ -270,7 +321,6 @@
                 return;
             }
 
-            // Arrière-plan (3 bandes)
             let colors = partyObj.bgColors;
             let w = canvas.width / 3;
             for (let i = 0; i < 3; i++) {
@@ -278,7 +328,6 @@
                 ctx.fillRect(i * w, 0, w, canvas.height);
             }
 
-            // Dessin du Symbole au centre
             let cx = canvas.width / 2;
             let cy = canvas.height / 2;
 
@@ -287,41 +336,27 @@
             ctx.lineWidth = 3;
 
             if (partyObj.symbol === "fasces") {
-                // Fasce / Hache
                 ctx.fillRect(cx - 5, cy - 35, 10, 70);
                 ctx.beginPath(); ctx.arc(cx - 10, cy, 20, Math.PI * 1.5, Math.PI * 0.5); ctx.fill(); ctx.stroke();
             } else if (partyObj.symbol === "hammer_sickle") {
-                // Faucille & Marteau
-                ctx.font = "bold 50px sans-serif";
-                ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                ctx.font = "bold 50px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
                 ctx.fillText("☭", cx, cy);
             } else if (partyObj.symbol === "star") {
-                // Étoile
-                ctx.font = "bold 60px sans-serif";
-                ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                ctx.font = "bold 60px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
                 ctx.fillText("★", cx, cy);
             } else if (partyObj.symbol === "crown") {
-                // Couronne
-                ctx.font = "bold 50px sans-serif";
-                ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                ctx.font = "bold 50px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
                 ctx.fillText("👑", cx, cy);
             } else if (partyObj.symbol === "cross") {
-                // Croix
-                ctx.fillRect(cx - 8, cy - 35, 16, 70);
-                ctx.fillRect(cx - 30, cy - 15, 60, 16);
+                ctx.fillRect(cx - 8, cy - 35, 16, 70); ctx.fillRect(cx - 30, cy - 15, 60, 16);
             } else if (partyObj.symbol === "anarchy") {
-                // Symbole Anarchie (Ⓐ)
-                ctx.font = "bold 55px sans-serif";
-                ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                ctx.font = "bold 55px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
                 ctx.fillText("Ⓐ", cx, cy);
             } else if (partyObj.symbol === "leaf") {
-                // Feuille
-                ctx.font = "bold 50px sans-serif";
-                ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                ctx.font = "bold 50px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
                 ctx.fillText("🌿", cx, cy);
             } else {
-                ctx.font = "bold 50px sans-serif";
-                ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                ctx.font = "bold 50px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
                 ctx.fillText("🌹", cx, cy);
             }
         }
@@ -355,7 +390,6 @@
                     currentCountry.gdpCap = result.value;
                     document.getElementById('c-gdp-cap').innerText = result.text;
 
-                    // Calcul PIB Total
                     if (currentCountry.pop) {
                         let total = BigInt(currentCountry.pop) * BigInt(currentCountry.gdpCap);
                         document.getElementById('c-gdp-total').innerText = Number(total).toLocaleString('fr-FR') + " $";
@@ -371,10 +405,17 @@
                     currentCountry.culture = result.value;
                     document.getElementById('c-culture').innerText = result.text;
                 } else if (step.key === "final") {
-                    // NOM ET DRAPEAU EN DERNIER
                     currentCountry.name = result.value;
                     document.getElementById('c-name').innerText = currentCountry.name;
                     drawCustomFlag(currentCountry.partyObj);
+
+                    // Assigner les pays similaires basés sur le parti politique sélectionné
+                    const pData = currentCountry.partyObj || politicalData[0];
+                    const simHist = pData.histCountries[Math.floor(Math.random() * pData.histCountries.length)];
+                    const simCurr = pData.currCountries[Math.floor(Math.random() * pData.currCountries.length)];
+
+                    document.getElementById('c-sim-hist').innerText = simHist;
+                    document.getElementById('c-sim-curr').innerText = simCurr;
                 }
 
                 wheel.style.transition = 'none';
@@ -474,7 +515,6 @@
             logBox.innerHTML += `<br>🏆 <strong>VAINQUEUR FINAL : ${fighters[0].name} (Leader: ${fighters[0].leader}) !</strong>`;
         }
 
-        // Initialisation
         updateStepWheel();
         drawCustomFlag(null);
     </script>
