@@ -36,7 +36,6 @@
         }
         .mode-btn.active { background: #7f5af0; color: white; border-color: #7f5af0; }
 
-        /* Style de la Roue */
         .wheel-box {
             background: #242429;
             padding: 15px;
@@ -76,13 +75,16 @@
             z-index: 10;
         }
 
-        #flag {
-            width: 100%; height: 100px; border-radius: 8px; display: flex;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4); overflow: hidden; margin-bottom: 15px;
+        /* Canvas Drapeau personnalisé avec symbole */
+        canvas#flagCanvas {
+            width: 100%;
+            height: 140px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            margin-bottom: 15px;
             border: 1px solid #333;
+            background: #111;
         }
-        .stripe-v { flex: 1; height: 100%; }
-        .stripe-h { width: 100%; flex: 1; }
 
         .grid-stats {
             display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; text-align: left;
@@ -100,7 +102,6 @@
         button.btn-act:disabled { background-color: #444; cursor: not-allowed; }
         button.btn-auto { background-color: #2cb67d; }
 
-        /* Style Tournoi */
         .tournament-list { display: flex; flex-direction: column; gap: 10px; text-align: left; margin-bottom: 15px; }
         .country-card { background: #242429; padding: 10px; border-radius: 8px; border-left: 4px solid #7f5af0; }
         .log-box {
@@ -118,7 +119,6 @@
             <button id="btnModeTournament" class="mode-btn" onclick="switchMode('tournament')">Mode Tournoi 🏆</button>
         </div>
 
-        <!-- Section Roue Interactive -->
         <div class="wheel-box">
             <div id="wheelTitle" class="wheel-title">Tourner pour : Superficie</div>
             <div class="wheel-container">
@@ -127,18 +127,20 @@
             </div>
         </div>
 
-        <!-- Mode Normal -->
         <div id="normalView">
-            <div id="flag"></div>
+            <!-- Drapeau Canvas -->
+            <canvas id="flagCanvas" width="300" height="150"></canvas>
+
             <div class="grid-stats">
-                <div class="info-group full"><div class="label">Nom du pays</div><div class="value" id="c-name">-</div></div>
                 <div class="info-group"><div class="label">Superficie</div><div class="value" id="c-area">-</div></div>
                 <div class="info-group"><div class="label">Population</div><div class="value" id="c-pop">-</div></div>
                 <div class="info-group"><div class="label">IDH</div><div class="value" id="c-hdi">-</div></div>
-                <div class="info-group"><div class="label">PIB / hab.</div><div class="value" id="c-gdp">-</div></div>
+                <div class="info-group"><div class="label">PIB / hab.</div><div class="value" id="c-gdp-cap">-</div></div>
+                <div class="info-group full"><div class="label">PIB Total</div><div class="value" id="c-gdp-total">-</div></div>
                 <div class="info-group"><div class="label">Parti Politique</div><div class="value" id="c-party">-</div></div>
                 <div class="info-group"><div class="label">Leader Historique</div><div class="value" id="c-leader">-</div></div>
                 <div class="info-group full"><div class="label">Culture</div><div class="value" id="c-culture">-</div></div>
+                <div class="info-group full" style="border: 1px solid #7f5af0;"><div class="label" style="color: #7f5af0;">Nom de la Nation (Final)</div><div class="value" id="c-name" style="font-size: 1.2rem; color: #2cb67d;">???</div></div>
             </div>
             
             <div class="btn-group">
@@ -147,7 +149,6 @@
             </div>
         </div>
 
-        <!-- Mode Tournoi -->
         <div id="tournamentView" class="hidden">
             <button id="btnGenTournament" class="btn-act" style="width: 100%; margin-bottom: 15px;" onclick="startTournamentGen()">Générer 5 Pays via la Roue 🎡</button>
             <div id="tournamentCountries" class="tournament-list"></div>
@@ -157,39 +158,37 @@
     </div>
 
     <script>
-        const prefixes = ["Val", "Ar", "Bel", "Kael", "Nov", "Zor", "Ond", "Eld", "Mar", "Sol"];
+        const prefixes = ["Val", "Ar", "Bel", "Kael", "Nov", "Zor", "Ond", "Eld", "Mar", "Sol", "Vanguard", "Aethel"];
         const suffixes = ["ia", "is", "oria", "gard", "onia", "vane", "terra", "mire", "stan", "dor"];
-        const colors = ["#e63946", "#f1faee", "#a8dadc", "#457b9d", "#1d3557", "#2a9d8f", "#e9c46a", "#f4a261", "#9b5de5"];
-
-        // Données des 8 Partis politiques avec 8 leaders chacun
+        
         const politicalData = [
-            { party: "Fascisme / Nazisme", leaders: ["Adolf Hitler", "Benito Mussolini", "Philippe Pétain", "Francisco Franco", "Oswald Mosley", "Ante Pavelić", "Miklos Horthy", "Ion Antonescu"], culture: "Militarisme Radical" },
-            { party: "Communisme", leaders: ["Vladimir Lénine", "Joseph Staline", "Mao Zedong", "Fidel Castro", "Ho Chi Minh", "Josip Broz Tito", "Enver Hoxha", "Thomas Sankara"], culture: "Collectivisme d'État" },
-            { party: "Démocratie Libérale", leaders: ["Franklin D. Roosevelt", "Winston Churchill", "Charles de Gaulle", "John F. Kennedy", "Margaret Thatcher", "Ronald Reagan", "Konrad Adenauer", "Dwight Eisenhower"], culture: "Libéralisme & Marché" },
-            { party: "Monarchie Absolue", leaders: ["Louis XIV", "Napoléon Ier", "Chaka Zoulou", "Alexandre le Grand", "Jules César", "Pierre le Grand", "Empereur Meiji", "Suleiman Ier"], culture: "Tradition Impériale" },
-            { party: "Social-Démocratie", leaders: ["Olof Palme", "Clement Attlee", "Willy Brandt", "Jean Jaurès", "Léon Blum", "Sandro Pertini", "Michael Savage", "Nelson Mandela"], culture: "État-Providence" },
-            { party: "Théocratie", leaders: ["Ruhollah Khomeini", "Innocent III", "Girolamo Savonarole", "Hong Xiuquan", "Umar ibn al-Khattâb", "Ismail Ier", "Jan van Leiden", "Pape Pie XII"], culture: "Loi Sacrée" },
-            { party: "Anarchisme", leaders: ["Nestor Makhno", "Pierre-Joseph Proudhon", "Mikhail Bakounine", "Piotr Kropotkine", "Louise Michel", "Buenaventura Durruti", "Emma Goldman", "Errico Malatesta"], culture: "Autogestion Libre" },
-            { party: "Écologisme", leaders: ["René Dumont", "Petra Kelly", "Wangari Maathai", "Aldo Leopold", "Petra De Sutter", "Gro Harlem Brundtland", "E. F. Schumacher", "Chico Mendes"], culture: "Éco-Responsabilité" }
+            { party: "Fascisme / Nazisme", leaders: ["Adolf Hitler", "Benito Mussolini", "Philippe Pétain", "Francisco Franco", "Oswald Mosley", "Ante Pavelić", "Miklos Horthy", "Ion Antonescu"], culture: "Militarisme Radical", symbol: "fasces", bgColors: ["#800000", "#111111", "#dddddd"] },
+            { party: "Communisme", leaders: ["Vladimir Lénine", "Joseph Staline", "Mao Zedong", "Fidel Castro", "Ho Chi Minh", "Josip Broz Tito", "Enver Hoxha", "Thomas Sankara"], culture: "Collectivisme d'État", symbol: "hammer_sickle", bgColors: ["#cc0000", "#dd0000", "#ffcc00"] },
+            { party: "Démocratie Libérale", leaders: ["Franklin D. Roosevelt", "Winston Churchill", "Charles de Gaulle", "John F. Kennedy", "Margaret Thatcher", "Ronald Reagan", "Konrad Adenauer", "Dwight Eisenhower"], culture: "Libéralisme & Marché", symbol: "star", bgColors: ["#003399", "#ffffff", "#cc0000"] },
+            { party: "Monarchie Absolue", leaders: ["Louis XIV", "Napoléon Ier", "Chaka Zoulou", "Alexandre le Grand", "Jules César", "Pierre le Grand", "Empereur Meiji", "Suleiman Ier"], culture: "Tradition Impériale", symbol: "crown", bgColors: ["#4b0082", "#ffd700", "#ffffff"] },
+            { party: "Social-Démocratie", leaders: ["Olof Palme", "Clement Attlee", "Willy Brandt", "Jean Jaurès", "Léon Blum", "Sandro Pertini", "Michael Savage", "Nelson Mandela"], culture: "État-Providence", symbol: "rose", bgColors: ["#e63946", "#ffffff", "#1d3557"] },
+            { party: "Théocratie", leaders: ["Ruhollah Khomeini", "Innocent III", "Girolamo Savonarole", "Hong Xiuquan", "Umar ibn al-Khattâb", "Ismail Ier", "Jan van Leiden", "Pape Pie XII"], culture: "Loi Sacrée", symbol: "cross", bgColors: ["#006633", "#ffffff", "#ffd700"] },
+            { party: "Anarchisme", leaders: ["Nestor Makhno", "Pierre-Joseph Proudhon", "Mikhail Bakounine", "Piotr Kropotkine", "Louise Michel", "Buenaventura Durruti", "Emma Goldman", "Errico Malatesta"], culture: "Autogestion Libre", symbol: "anarchy", bgColors: ["#111111", "#cc0000", "#222222"] },
+            { party: "Écologisme", leaders: ["René Dumont", "Petra Kelly", "Wangari Maathai", "Aldo Leopold", "Petra De Sutter", "Gro Harlem Brundtland", "E. F. Schumacher", "Chico Mendes"], culture: "Éco-Responsabilité", symbol: "leaf", bgColors: ["#2a9d8f", "#e9c46a", "#264653"] }
         ];
 
-        // Étapes du tirage
         const steps = [
             { name: "Superficie", key: "area" },
             { name: "Population", key: "pop" },
             { name: "IDH", key: "hdi" },
-            { name: "PIB / hab.", key: "gdp" },
+            { name: "PIB / hab.", key: "gdpCap" },
             { name: "Parti Politique", key: "party" },
             { name: "Leader Historique", key: "leader" },
-            { name: "Culture", key: "culture" }
+            { name: "Culture", key: "culture" },
+            { name: "Nom du Pays & Drapeau", key: "final" }
         ];
 
         let currentStepIndex = 0;
         let isSpinning = false;
         let currentCountry = {};
+        let currentWheelOptions = [];
         let tournamentNations = [];
 
-        // Génération d'options pour la roue selon la catégorie
         function getWheelOptionsForStep(stepKey) {
             let options = [];
             if (stepKey === "area") {
@@ -207,7 +206,7 @@
                     let val = (0.100 + (Math.floor(Math.random() * 19) * 0.050)).toFixed(3);
                     options.push({ text: val, value: val });
                 }
-            } else if (stepKey === "gdp") {
+            } else if (stepKey === "gdpCap") {
                 for (let i = 1; i <= 8; i++) {
                     let val = Math.floor(Math.random() * 1195) * 100 + 500;
                     options.push({ text: val.toLocaleString('fr-FR') + " $", value: val });
@@ -219,11 +218,14 @@
                 partyObj.leaders.forEach(l => options.push({ text: l, value: l }));
             } else if (stepKey === "culture") {
                 politicalData.forEach(p => options.push({ text: p.culture, value: p.culture }));
+            } else if (stepKey === "final") {
+                for (let i = 1; i <= 8; i++) {
+                    let name = prefixes[Math.floor(Math.random() * prefixes.length)] + suffixes[Math.floor(Math.random() * suffixes.length)];
+                    options.push({ text: name, value: name });
+                }
             }
             return options;
         }
-
-        let currentWheelOptions = [];
 
         function drawWheel(options) {
             const canvas = document.getElementById('wheel');
@@ -239,13 +241,12 @@
                 ctx.arc(100, 100, 100, i * slice, (i + 1) * slice);
                 ctx.fill();
 
-                // Texte
                 ctx.save();
                 ctx.translate(100, 100);
                 ctx.rotate(i * slice + slice / 2);
                 ctx.fillStyle = "#fff";
                 ctx.font = "bold 9px sans-serif";
-                ctx.fillText(options[i].text.substring(0, 14), 30, 3);
+                ctx.fillText(options[i].text.substring(0, 14), 28, 3);
                 ctx.restore();
             }
         }
@@ -257,16 +258,71 @@
             drawWheel(currentWheelOptions);
         }
 
-        function drawFlag() {
-            const flag = document.getElementById("flag");
-            flag.innerHTML = "";
-            const isVertical = Math.random() > 0.5;
-            flag.style.flexDirection = isVertical ? "row" : "column";
+        // DESSIN DYNAMIQUE DU DRAPEAU ET DU SYMBOLE
+        function drawCustomFlag(partyObj) {
+            const canvas = document.getElementById('flagCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (!partyObj) {
+                ctx.fillStyle = "#222";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                return;
+            }
+
+            // Arrière-plan (3 bandes)
+            let colors = partyObj.bgColors;
+            let w = canvas.width / 3;
             for (let i = 0; i < 3; i++) {
-                const stripe = document.createElement("div");
-                stripe.className = isVertical ? "stripe-v" : "stripe-h";
-                stripe.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                flag.appendChild(stripe);
+                ctx.fillStyle = colors[i];
+                ctx.fillRect(i * w, 0, w, canvas.height);
+            }
+
+            // Dessin du Symbole au centre
+            let cx = canvas.width / 2;
+            let cy = canvas.height / 2;
+
+            ctx.fillStyle = "#ffd700";
+            ctx.strokeStyle = "#111";
+            ctx.lineWidth = 3;
+
+            if (partyObj.symbol === "fasces") {
+                // Fasce / Hache
+                ctx.fillRect(cx - 5, cy - 35, 10, 70);
+                ctx.beginPath(); ctx.arc(cx - 10, cy, 20, Math.PI * 1.5, Math.PI * 0.5); ctx.fill(); ctx.stroke();
+            } else if (partyObj.symbol === "hammer_sickle") {
+                // Faucille & Marteau
+                ctx.font = "bold 50px sans-serif";
+                ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                ctx.fillText("☭", cx, cy);
+            } else if (partyObj.symbol === "star") {
+                // Étoile
+                ctx.font = "bold 60px sans-serif";
+                ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                ctx.fillText("★", cx, cy);
+            } else if (partyObj.symbol === "crown") {
+                // Couronne
+                ctx.font = "bold 50px sans-serif";
+                ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                ctx.fillText("👑", cx, cy);
+            } else if (partyObj.symbol === "cross") {
+                // Croix
+                ctx.fillRect(cx - 8, cy - 35, 16, 70);
+                ctx.fillRect(cx - 30, cy - 15, 60, 16);
+            } else if (partyObj.symbol === "anarchy") {
+                // Symbole Anarchie (Ⓐ)
+                ctx.font = "bold 55px sans-serif";
+                ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                ctx.fillText("Ⓐ", cx, cy);
+            } else if (partyObj.symbol === "leaf") {
+                // Feuille
+                ctx.font = "bold 50px sans-serif";
+                ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                ctx.fillText("🌿", cx, cy);
+            } else {
+                ctx.font = "bold 50px sans-serif";
+                ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                ctx.fillText("🌹", cx, cy);
             }
         }
 
@@ -280,19 +336,11 @@
             const selectedIndex = Math.floor(Math.random() * currentWheelOptions.length);
             const sliceDeg = 360 / currentWheelOptions.length;
             
-            // Calcul de la rotation pour s'arrêter sur la flèche du haut
             const targetDeg = 1440 + (360 - (selectedIndex * sliceDeg + sliceDeg/2));
             wheel.style.transform = `rotate(${targetDeg}deg)`;
 
             setTimeout(() => {
                 const result = currentWheelOptions[selectedIndex];
-
-                if (currentStepIndex === 0) {
-                    // Nouveau Pays
-                    currentCountry = { name: prefixes[Math.floor(Math.random() * prefixes.length)] + suffixes[Math.floor(Math.random() * suffixes.length)] };
-                    document.getElementById('c-name').innerText = currentCountry.name;
-                    drawFlag();
-                }
 
                 if (step.key === "area") {
                     currentCountry.area = result.value;
@@ -303,9 +351,15 @@
                 } else if (step.key === "hdi") {
                     currentCountry.hdi = result.value;
                     document.getElementById('c-hdi').innerText = result.text;
-                } else if (step.key === "gdp") {
-                    currentCountry.gdp = result.value;
-                    document.getElementById('c-gdp').innerText = result.text;
+                } else if (step.key === "gdpCap") {
+                    currentCountry.gdpCap = result.value;
+                    document.getElementById('c-gdp-cap').innerText = result.text;
+
+                    // Calcul PIB Total
+                    if (currentCountry.pop) {
+                        let total = BigInt(currentCountry.pop) * BigInt(currentCountry.gdpCap);
+                        document.getElementById('c-gdp-total').innerText = Number(total).toLocaleString('fr-FR') + " $";
+                    }
                 } else if (step.key === "party") {
                     currentCountry.partyObj = result.value;
                     currentCountry.party = result.value.party;
@@ -316,14 +370,17 @@
                 } else if (step.key === "culture") {
                     currentCountry.culture = result.value;
                     document.getElementById('c-culture').innerText = result.text;
+                } else if (step.key === "final") {
+                    // NOM ET DRAPEAU EN DERNIER
+                    currentCountry.name = result.value;
+                    document.getElementById('c-name').innerText = currentCountry.name;
+                    drawCustomFlag(currentCountry.partyObj);
                 }
 
-                // Reset de la roue
                 wheel.style.transition = 'none';
                 wheel.style.transform = 'rotate(0deg)';
                 setTimeout(() => { wheel.style.transition = 'transform 2.5s cubic-bezier(0.15, 0.99, 0.18, 1)'; }, 50);
 
-                // Passer à l'étape suivante
                 currentStepIndex = (currentStepIndex + 1) % steps.length;
                 updateStepWheel();
 
@@ -363,19 +420,20 @@
                 const leader = partyObj.leaders[Math.floor(Math.random() * partyObj.leaders.length)];
                 const area = (Math.floor(Math.random() * 9999) + 1) * 100000;
                 const pop = (Math.floor(Math.random() * 9999) + 1) * 100000;
-                const gdp = Math.floor(Math.random() * 1195) * 100 + 500;
+                const gdpCap = Math.floor(Math.random() * 1195) * 100 + 500;
                 const hdi = (0.100 + (Math.floor(Math.random() * 19) * 0.050)).toFixed(3);
+                const totalGdp = BigInt(pop) * BigInt(gdpCap);
 
                 const nation = {
-                    name, party: partyObj.party, leader, area, pop, gdp, hdi,
-                    power: Math.floor((area / 1000000) + (pop / 1000000) + (gdp / 100) + (parseFloat(hdi) * 100))
+                    name, party: partyObj.party, leader, area, pop, gdpCap, totalGdp, hdi,
+                    power: Math.floor((area / 1000000) + (pop / 1000000) + (gdpCap / 100) + (parseFloat(hdi) * 100))
                 };
                 tournamentNations.push(nation);
 
                 container.innerHTML += `
                     <div class="country-card">
                         <strong>${i+1}. ${nation.name}</strong> (${nation.party})<br>
-                        <small>Leader: ${nation.leader} | Pop: ${(nation.pop/1000000).toFixed(1)}M | Puissance: ${nation.power}</small>
+                        <small>Leader: ${nation.leader} | Pop: ${(nation.pop/1000000).toFixed(1)}M | PIB: ${Number(totalGdp).toLocaleString('fr-FR')} $</small>
                     </div>
                 `;
             }
@@ -416,10 +474,9 @@
             logBox.innerHTML += `<br>🏆 <strong>VAINQUEUR FINAL : ${fighters[0].name} (Leader: ${fighters[0].leader}) !</strong>`;
         }
 
-        // Initialisation de la première étape
+        // Initialisation
         updateStepWheel();
+        drawCustomFlag(null);
     </script>
 </body>
 </html>
-
-
