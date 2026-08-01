@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur de Nation & Collections Historiques</title>
+    <title>WikiNation & Encyclopédie Historique</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -18,7 +18,7 @@
             padding-bottom: 40px;
         }
 
-        /* --- ÉCRAN D'ACCUEIL --- */
+        /* ÉCRAN D'ACCUEIL */
         #welcome-screen {
             position: fixed;
             top: 0; left: 0;
@@ -45,7 +45,7 @@
             position: relative;
             z-index: 2;
             max-width: 650px;
-            background: rgba(22, 22, 26, 0.75);
+            background: rgba(22, 22, 26, 0.85);
             backdrop-filter: blur(10px);
             padding: 35px 25px;
             border-radius: 20px;
@@ -75,9 +75,9 @@
         }
         .btn-start:hover { transform: scale(1.05); background-color: #34d399; }
 
-        /* --- APPLICATION PRINCIPALE --- */
+        /* APPLICATION PRINCIPALE */
         .app-container {
-            width: 100%; max-width: 680px; padding: 15px; opacity: 0; transition: opacity 1s ease;
+            width: 100%; max-width: 700px; padding: 15px; opacity: 0; transition: opacity 1s ease;
         }
 
         .mode-toggle-bar {
@@ -108,7 +108,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; border: 1px solid #242429; margin-bottom: 15px;
         }
 
-        /* --- ROUE RESTYLISÉE ET PLUS PETITE --- */
+        /* ROUE COMPACTE */
         .wheel-box { background: #242429; padding: 10px; border-radius: 12px; margin-bottom: 12px; }
         .wheel-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #7f5af0; font-weight: bold; margin-bottom: 6px; }
         .wheel-container { position: relative; width: 120px; height: 120px; margin: 0 auto; }
@@ -126,14 +126,21 @@
             background: #16161a; border: 1px solid #7f5af0; color: white; padding: 6px; border-radius: 6px; font-size: 0.8rem;
         }
 
-        /* DRAPEAU */
-        .flag-box { position: relative; margin-bottom: 12px; }
-        canvas#flagCanvas {
-            width: 100%; height: 120px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); border: 1px solid #333; background: #111;
+        /* DRAPEAU ET PHOTO LEADER */
+        .visuals-container {
+            display: flex; gap: 10px; margin-bottom: 12px;
+        }
+        .flag-box { flex: 2; position: relative; }
+        .flag-box img, .flag-box canvas {
+            width: 100%; height: 120px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); border: 1px solid #333; object-fit: cover; background: #111;
+        }
+        .leader-portrait-box { flex: 1; position: relative; }
+        .leader-portrait-box img {
+            width: 100%; height: 120px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); border: 1px solid #7f5af0; object-fit: cover; background: #222;
         }
         .flag-lock-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);
-            display: flex; justify-content: center; align-items: center; color: #aaa; font-size: 0.85rem; border-radius: 8px; font-weight: bold;
+            display: flex; justify-content: center; align-items: center; color: #aaa; font-size: 0.85rem; border-radius: 8px; font-weight: bold; text-align: center;
         }
 
         .grid-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px; text-align: left; }
@@ -152,17 +159,17 @@
         button.btn-act:disabled { background-color: #444; cursor: not-allowed; }
         button.btn-auto { background-color: #2cb67d; }
 
-        /* BLOC DESCRIPTION DÉTAILLÉE (REMPLACE IA) */
-        .desc-box { background: #121215; border: 1px solid #7f5af0; border-radius: 12px; padding: 12px; text-align: left; margin-top: 12px; }
-        .desc-title { color: #7f5af0; font-weight: bold; font-size: 0.85rem; margin-bottom: 8px; border-bottom: 1px solid #222; padding-bottom: 4px; }
-        .desc-text { font-size: 0.78rem; color: #a7a9be; line-height: 1.4; }
-        .desc-text strong { color: #fffffe; }
+        /* WIKIPÉDIA & MODULE ÉDUCATEUR */
+        .wiki-box { background: #121215; border: 1px solid #2cb67d; border-radius: 12px; padding: 12px; text-align: left; margin-top: 12px; }
+        .wiki-title { color: #2cb67d; font-weight: bold; font-size: 0.9rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid #222; padding-bottom: 4px; }
+        .wiki-text { font-size: 0.78rem; color: #a7a9be; line-height: 1.4; max-height: 200px; overflow-y: auto; }
 
         /* SECTIONS COLLECTIONS */
         .collection-section { display: none; text-align: left; background: #16161a; padding: 15px; border-radius: 12px; border: 1px solid #242429; }
         .collection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-top: 10px; }
-        .collection-card { background: #242429; border-radius: 8px; padding: 8px; text-align: center; border: 1px solid #333; }
-        .collection-card img, .collection-card canvas { width: 100%; height: 65px; border-radius: 4px; object-fit: cover; }
+        .collection-card { background: #242429; border-radius: 8px; padding: 8px; text-align: center; border: 1px solid #333; cursor: pointer; transition: transform 0.2s; }
+        .collection-card:hover { transform: scale(1.03); border-color: #7f5af0; }
+        .collection-card img { width: 100%; height: 75px; border-radius: 4px; object-fit: cover; }
         .collection-card .card-name { font-size: 0.7rem; font-weight: bold; margin-top: 4px; color: #2cb67d; }
         .collection-card .card-sub { font-size: 0.6rem; color: #aaa; }
     </style>
@@ -174,26 +181,25 @@
         <canvas id="starsCanvas"></canvas>
         <div class="welcome-content">
             <div class="globe-container"><canvas id="globeCanvas" width="110" height="110"></canvas></div>
-            <h1 class="welcome-title">Nation & Histoire</h1>
-            <p class="welcome-desc">Créez vos empires, explorez les régimes politiques, les cultures et les religions historiques, et débloquez votre collection de leaders et de drapeaux.</p>
-            <button class="btn-start" onclick="launchApp()">🚀 Lancer</button>
+            <h1 class="welcome-title">WikiNation Éducatif</h1>
+            <p class="welcome-desc">Découvrez l'Histoire et la Géopolitique à travers un simulateur de nations. Découvrez les portraits réels, vrais drapeaux historiques et biographies Wikipédia directes.</p>
+            <button class="btn-start" onclick="launchApp()">🚀 Explorer</button>
         </div>
     </div>
 
     <!-- APPLICATION PRINCIPALE -->
     <div class="app-container" id="mainApp">
 
-        <!-- TOGGLE MODE DE CRÉATION ET COLLECTIONS -->
         <div class="mode-toggle-bar">
             <button id="btnModeWheel" class="btn-mode active" onclick="switchMode('wheel')">🎰 Roue</button>
             <button id="btnModeManual" class="btn-mode" onclick="switchMode('manual')">✍️ Manuel</button>
-            <button id="btnModeFlags" class="btn-mode" onclick="switchMode('flags')">🚩 Drapeaux (<span id="countFlags">0</span>)</button>
+            <button id="btnModeFlags" class="btn-mode" onclick="switchMode('flags')">🚩 Drapeaux Réels (<span id="countFlags">0</span>)</button>
             <button id="btnModeLeaders" class="btn-mode" onclick="switchMode('leaders')">👑 Leaders (<span id="countLeaders">0</span>)</button>
         </div>
 
         <div class="header-bar">
             <div>
-                <span class="label">Comparer à :</span><br>
+                <span class="label">Comparer au Pays Réel :</span><br>
                 <select id="selectRealCountry" class="select-custom" onchange="updateComparison()">
                     <option value="France">🇫🇷 France</option>
                     <option value="USA">🇺🇸 USA</option>
@@ -205,14 +211,13 @@
                 </select>
             </div>
             <div>
-                <span class="label">Système :</span><br>
-                <span style="font-size:0.8rem; font-weight:bold; color:#2cb67d;">V2.5 Actif</span>
+                <span class="label">Encyclopédie :</span><br>
+                <span style="font-size:0.8rem; font-weight:bold; color:#2cb67d;">Wikipédia Direct</span>
             </div>
         </div>
 
         <!-- BLOC SIMULATEUR / CRÉATEUR -->
         <div id="creatorCard" class="card">
-            <!-- ROUE RESTYLISÉE ET PETITE -->
             <div id="wheelSection" class="wheel-box">
                 <div id="wheelTitle" class="wheel-title">Tourner pour : Superficie</div>
                 <div class="wheel-container">
@@ -221,24 +226,29 @@
                 </div>
             </div>
 
-            <!-- FORMULAIRE (MODE MANUEL) -->
             <div id="manualSection" class="manual-form" style="display: none;">
-                <div class="form-group full"><label>Nom de la Nation</label><input type="text" id="m-name" value="Empire Eldorien" onchange="applyManualConfig()"></div>
-                <div class="form-group"><label>Superficie (km²)</label><input type="number" id="m-area" value="650000" onchange="applyManualConfig()"></div>
-                <div class="form-group"><label>Population</label><input type="number" id="m-pop" value="50000000" onchange="applyManualConfig()"></div>
-                <div class="form-group"><label>PIB / Habitant ($)</label><input type="number" id="m-gdp-cap" value="42000" onchange="applyManualConfig()"></div>
-                <div class="form-group"><label>Armée (% Pop, 0.01-0.1)</label><input type="number" step="0.01" id="m-army" value="0.05" onchange="applyManualConfig()"></div>
-                <div class="form-group"><label>IDH (0 à 1)</label><input type="number" step="0.01" id="m-hdi" value="0.880" onchange="applyManualConfig()"></div>
+                <div class="form-group full"><label>Nom de la Nation</label><input type="text" id="m-name" value="République d'Eldoria" onchange="applyManualConfig()"></div>
+                <div class="form-group"><label>Superficie (km²)</label><input type="number" id="m-area" value="550000" onchange="applyManualConfig()"></div>
+                <div class="form-group"><label>Population</label><input type="number" id="m-pop" value="45000000" onchange="applyManualConfig()"></div>
+                <div class="form-group"><label>PIB / Habitant ($)</label><input type="number" id="m-gdp-cap" value="38000" onchange="applyManualConfig()"></div>
+                <div class="form-group"><label>Armée (% Pop, 0,1 à 1%)</label><input type="number" step="0.1" id="m-army" value="0.5" onchange="applyManualConfig()"></div>
+                <div class="form-group"><label>IDH (0 à 1)</label><input type="number" step="0.01" id="m-hdi" value="0.870" onchange="applyManualConfig()"></div>
                 <div class="form-group"><label>Régime Politique</label><select id="m-party" onchange="applyManualConfig()"></select></div>
                 <div class="form-group"><label>Religion</label><select id="m-religion" onchange="applyManualConfig()"></select></div>
                 <div class="form-group"><label>Leader</label><select id="m-leader" onchange="applyManualConfig()"></select></div>
-                <div class="form-group"><label>Culture</label><input type="text" id="m-culture" value="Tradition & Innovation" onchange="applyManualConfig()"></div>
+                <div class="form-group"><label>Culture</label><input type="text" id="m-culture" value="Science & Philosophie" onchange="applyManualConfig()"></div>
             </div>
 
-            <!-- DRAPEAU ET MASQUAGE -->
-            <div class="flag-box">
-                <canvas id="flagCanvas" width="300" height="120"></canvas>
-                <div id="flagLock" class="flag-lock-overlay">🔒 Terminez la roue pour débloquer le drapeau IA</div>
+            <!-- VISUELS : DRAPEAU ET LEADER -->
+            <div class="visuals-container">
+                <div class="flag-box">
+                    <img id="flagImgDisplay" src="" alt="Drapeau Réel" style="display:none;">
+                    <canvas id="flagCanvas" width="300" height="120"></canvas>
+                    <div id="flagLock" class="flag-lock-overlay">🔒 Finalisez la nation pour débloquer le vrai drapeau</div>
+                </div>
+                <div class="leader-portrait-box">
+                    <img id="leaderPortraitImg" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png" alt="Portrait du Leader">
+                </div>
             </div>
 
             <div class="grid-stats">
@@ -273,33 +283,67 @@
                 <button id="btnFullAuto" class="btn-act btn-auto" onclick="generateAllWithWheelAnimation()">⚡ Tout Tirer</button>
             </div>
 
-            <!-- DESCRIPTION HISTORIQUE ET POLITIQUE DÉTAILLÉE -->
-            <div class="desc-box">
-                <div class="desc-title">📖 Fiche Descriptive & Historique</div>
-                <div class="desc-text" id="descContent">
-                    Complétez le tirage de la roue ou configurez une nation en mode manuel pour générer l'analyse politique, religieuse et culturelle détaillée.
+            <!-- MODULE ÉDUCATEUR WIKIPÉDIA DYNAMIQUE -->
+            <div class="wiki-box">
+                <div class="wiki-title">📚 Fiche Éducative & Biographie Wikipédia</div>
+                <div class="wiki-text" id="wikiContent">
+                    Effectuez un tirage complet ou configurez un leader pour charger automatiquement la biographie réelle du Dirigeant et du Régime Politique via Wikipédia.
                 </div>
             </div>
         </div>
 
-        <!-- COLLECTION DES DRAPEAUX DEBLOQUES -->
+        <!-- COLLECTION DES DRAPEAUX RÉELS -->
         <div id="collectionFlags" class="collection-section">
-            <h3 style="color:#7f5af0; font-size:1rem;">🚩 Collection de Drapeaux Débloqués</h3>
-            <p style="font-size:0.75rem; color:#aaa; margin-top:4px;">Tous les drapeaux stylisés uniques générés à la fin de vos tirages.</p>
+            <h3 style="color:#7f5af0; font-size:1rem;">🚩 Collection de Drapeaux Réels Débloqués</h3>
             <div class="collection-grid" id="gridFlags"></div>
         </div>
 
-        <!-- COLLECTION DES LEADERS DEBLOQUES -->
+        <!-- COLLECTION DES LEADERS AVEC PORTRAITS RÉELS -->
         <div id="collectionLeaders" class="collection-section">
-            <h3 style="color:#2cb67d; font-size:1rem;">👑 Galerie des Leaders Débloqués</h3>
-            <p style="font-size:0.75rem; color:#aaa; margin-top:4px;">Portraits et données sur les dirigeants historiques et fictifs obtenus.</p>
+            <h3 style="color:#2cb67d; font-size:1rem;">👑 Galerie des Leaders Réels (Cliquez pour la bio Wikipédia)</h3>
             <div class="collection-grid" id="gridLeaders"></div>
         </div>
 
     </div>
 
     <script>
-        // BACKGROUND STARS & GLOBE 3D
+        // BASE DE DONNÉES LEADERS ET PHOTOS RÉELLES
+        const leadersDatabase = {
+            "Adolf Hitler": { img: "https://upload.wikimedia.org/wikipedia/commons/e/e1/Hitler_portrait_crop.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/9/99/Flag_of_German_Reich_%281935%E2%80%931945%29.svg" },
+            "Hermann Göring": { img: "https://upload.wikimedia.org/wikipedia/commons/2/29/Hermann_G%C3%B6ring_crop.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/9/99/Flag_of_German_Reich_%281935%E2%80%931945%29.svg" },
+            "Heinrich Himmler": { img: "https://upload.wikimedia.org/wikipedia/commons/e/e3/Heinrich_Himmler_knapp_vor_der_Festnahme.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/9/99/Flag_of_German_Reich_%281935%E2%80%931945%29.svg" },
+            "Joseph Goebbels": { img: "https://upload.wikimedia.org/wikipedia/commons/3/35/Joseph_Goebbels_1942.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/9/99/Flag_of_German_Reich_%281935%E2%80%931945%29.svg" },
+
+            "Benito Mussolini": { img: "https://upload.wikimedia.org/wikipedia/commons/a/af/Benito_Mussolini_portrait.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/0/0d/Flag_of_Italy_%281861-1946%29.svg" },
+            "Francisco Franco": { img: "https://upload.wikimedia.org/wikipedia/commons/2/2c/Francisco_Franco_1930.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Flag_of_Spain_%281938_-_1945%29.svg" },
+            "Oswald Mosley": { img: "https://upload.wikimedia.org/wikipedia/commons/a/ae/Oswald_Mosley_1936.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/0/0e/Flash_and_Circle_flag.svg" },
+
+            "Vladimir Lénine": { img: "https://upload.wikimedia.org/wikipedia/commons/4/43/Lenin_in_1920.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_the_Soviet_Union.svg" },
+            "Joseph Staline": { img: "https://upload.wikimedia.org/wikipedia/commons/a/aa/Joseph_Stalin_1942_crop.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Flag_of_the_Soviet_Union.svg" },
+            "Mao Zedong": { img: "https://upload.wikimedia.org/wikipedia/commons/a/a7/Mao_Zedong_1959.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Flag_of_the_People%27s_Republic_of_China.svg" },
+            "Fidel Castro": { img: "https://upload.wikimedia.org/wikipedia/commons/1/1d/Fidel_Castro_1978.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/b/bd/Flag_of_Cuba.svg" },
+
+            "Franklin D. Roosevelt": { img: "https://upload.wikimedia.org/wikipedia/commons/3/3e/FDR_1944_Color_Portrait_Crop.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg" },
+            "Winston Churchill": { img: "https://upload.wikimedia.org/wikipedia/commons/b/bc/Sir_Winston_Churchill_1940_NYP_45063.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/8/83/Flag_of_the_United_Kingdom_%283-2%29.svg" },
+            "Charles de Gaulle": { img: "https://upload.wikimedia.org/wikipedia/commons/5/52/Charles_de_Gaulle-photo-official.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/c/c3/Flag_of_France.svg" },
+
+            "Louis XIV": { img: "https://upload.wikimedia.org/wikipedia/commons/5/5f/Louis_XIV_of_France.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/1/18/Pavillon_royal_de_France.svg" },
+            "Napoléon Ier": { img: "https://upload.wikimedia.org/wikipedia/commons/5/50/Jacques-Louis_David_-_The_Emperor_Napoleon_in_His_Study_at_the_Tuileries_-_Google_Art_Project.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/c/c3/Flag_of_France.svg" },
+            "Pierre Ier de Russie": { img: "https://upload.wikimedia.org/wikipedia/commons/8/81/Peter_g_i.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/f/f3/Flag_of_Russia.svg" },
+
+            "Olof Palme": { img: "https://upload.wikimedia.org/wikipedia/commons/e/ea/Olof_Palme_1974.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/4/4c/Flag_of_Sweden.svg" },
+            "Willy Brandt": { img: "https://upload.wikimedia.org/wikipedia/commons/0/07/Bundesarchiv_B_145_Bild-F057884-0009%2C_Willy_Brandt.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Flag_of_Germany.svg" },
+            "Nelson Mandela": { img: "https://upload.wikimedia.org/wikipedia/commons/0/02/Nelson_Mandela_1994.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/a/af/Flag_of_South_Africa.svg" },
+
+            "Ruhollah Khomeini": { img: "https://upload.wikimedia.org/wikipedia/commons/0/02/Ayatollah_Khomeini.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/c/ca/Flag_of_Iran.svg" },
+            "Innocent III": { img: "https://upload.wikimedia.org/wikipedia/commons/3/36/Pope_Innocent_III.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/0/00/Flag_of_the_Vatican_City.svg" },
+            "Ali Khamenei": { img: "https://upload.wikimedia.org/wikipedia/commons/0/0a/Ali_Khamenei_official_portrait_2019.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/c/ca/Flag_of_Iran.svg" },
+
+            "Mustafa Kemal Atatürk": { img: "https://upload.wikimedia.org/wikipedia/commons/a/a8/Ataturk_1930s.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/b/b4/Flag_of_Turkey.svg" },
+            "Julius Caesar": { img: "https://upload.wikimedia.org/wikipedia/commons/6/62/Gaius_Julius_Caesar_%28Vatican_Museum%29.jpg", flag: "https://upload.wikimedia.org/wikipedia/commons/d/d4/Flag_of_the_Roman_Empire.svg" }
+        };
+
+        // ANIMATION ARRIÈRE-PLAN
         const starsCanvas = document.getElementById('starsCanvas');
         const starsCtx = starsCanvas.getContext('2d');
         let stars = [];
@@ -343,7 +387,6 @@
             setTimeout(() => { document.getElementById('mainApp').style.opacity = '1'; }, 300);
         }
 
-        // DONNÉES RÉELLES POUR COMPARAISON
         const realCountriesData = {
             "France": { pop: 68000000, gdp: 3000000000000, army: 200000, area: 551000, hdi: 0.903 },
             "USA": { pop: 335000000, gdp: 25000000000000, army: 1390000, area: 9834000, hdi: 0.921 },
@@ -354,35 +397,26 @@
             "Royaume-Uni": { pop: 67000000, gdp: 3100000000000, army: 150000, area: 242000, hdi: 0.929 }
         };
 
-        // RELIGIONS
         const religionsData = [
-            { name: "Paganisme Nordique", desc: "Culte polythéiste vénérant Odin, Thor et la nature. Fortes traditions guerrières et rituelles.", icon: "⚡" },
-            { name: "Paganisme Slave", desc: "Culte ancré dans les forces cosmiques, honorant Peroun et la dévotion aux ancêtres.", icon: "🪓" },
-            { name: "Chrétiens (Protestants)", desc: "Foi chrétienne réformée centrée sur la lecture directe des textes et la responsabilité individuelle.", icon: "✝️" },
-            { name: "Chrétiens (Catholiques)", desc: "Tradition chrétienne sacramentelle guidée par l'institution ecclésiale et le dogme central.", icon: "🇻🇦" },
-            { name: "Chrétiens (Orthodoxes)", desc: "Christianisme d'Orient riche en liturgie sacrée et fidélité aux conseils œcuméniques antique.", icon: "☦️" },
-            { name: "Islam (Sunnite)", desc: "Branche majoritaire de l'Islam fondée sur la Sunna du Prophète et la jurisprudence communautaire.", icon: "☪️" },
-            { name: "Islam (Chiite)", desc: "Courant de l'Islam attaché à la lignée spirituelle de l'Imam Ali et aux guidances du clergé.", icon: "🕌" },
-            { name: "Judaïsme", desc: "Monothéisme historique rigoureux articulé autour de la Torah, de la loi et de la mémoire communautaire.", icon: "✡️" }
+            { name: "Paganisme Nordique", icon: "⚡" },
+            { name: "Paganisme Slave", icon: "🪓" },
+            { name: "Chrétiens (Protestants)", icon: "✝️" },
+            { name: "Chrétiens (Catholiques)", icon: "🇻🇦" },
+            { name: "Chrétiens (Orthodoxes)", icon: "☦️" },
+            { name: "Islam (Sunnite)", icon: "☪️" },
+            { name: "Islam (Chiite)", icon: "🕌" },
+            { name: "Judaïsme", icon: "✡️" }
         ];
 
-        // 15 PARTIS ET RÉGIMES POLITIQUES
         const politicalData = [
-            { party: "National-Socialisme", leaders: ["Adolf Hitler", "Hermann Göring", "Heinrich Himmler", "Joseph Goebbels"], culture: "Autarcie & Totalitarisme", symbol: "swastika", bgColors: ["#cc0000", "#ffffff", "#000000"], histCountries: ["Allemagne IIIe Reich"], currCountries: ["Aucun officiel"], desc: "Régime totalitaire racialiste fondé sur le contrôle absolu de l'État et la militarisation extrême." },
-            { party: "Fascisme", leaders: ["Benito Mussolini", "Francisco Franco", "Oswald Mosley", "Galeazzo Ciano"], culture: "Militarisme Radical", symbol: "fasces", bgColors: ["#800000", "#111111", "#dddddd"], histCountries: ["Italie Fasciste", "Espagne Franciste"], currCountries: ["Érythrée"], desc: "Autoritarisme nationaliste structuré autour du culte du chef et de la suprématie de la Nation." },
-            { party: "Communisme", leaders: ["Vladimir Lénine", "Joseph Staline", "Mao Zedong", "Fidel Castro", "Léon Trotsky"], culture: "Collectivisme d'État", symbol: "hammer_sickle", bgColors: ["#cc0000", "#dd0000", "#ffcc00"], histCountries: ["URSS", "RDA"], currCountries: ["Chine", "Cuba", "Viêt Nam"], desc: "Système fondé sur l'abolition de la propriété privée et la planification de l'économie par l'État." },
-            { party: "Démocratie Libérale", leaders: ["Franklin D. Roosevelt", "Winston Churchill", "Charles de Gaulle", "John F. Kennedy"], culture: "Libéralisme & Marché", symbol: "star", bgColors: ["#003399", "#ffffff", "#cc0000"], histCountries: ["République Romaine", "USA (XXe)"], currCountries: ["États-Unis", "France"], desc: "Régime parlementaire promouvant le pluralisme politique, l'économie de marché et la liberté individuelle." },
-            { party: "Monarchie Absolue", leaders: ["Louis XIV", "Napoléon Ier", "Pierre le Grand", "Frédéric II"], culture: "Tradition Impériale", symbol: "crown", bgColors: ["#4b0082", "#ffd700", "#ffffff"], histCountries: ["Empire Français", "Empire Russe"], currCountries: ["Arabie Saoudite", "Oman"], desc: "Pouvoir exécutif et législatif concentré entièrement entre les mains d'un monarque héréditaire." },
-            { party: "Social-Démocratie", leaders: ["Olof Palme", "Willy Brandt", "Nelson Mandela", "Clement Attlee"], culture: "État-Providence", symbol: "rose", bgColors: ["#e63946", "#ffffff", "#1d3557"], histCountries: ["Suède (Palme)", "Autriche"], currCountries: ["Suède", "Norvège"], desc: "Modèle démocratique réconciliant capitalisme régalien et filets de protection sociale universels." },
-            { party: "Théocratie", leaders: ["Ruhollah Khomeini", "Innocent III", "Savonarole", "Ali Khamenei"], culture: "Loi Sacrée", symbol: "cross", bgColors: ["#006633", "#ffffff", "#ffd700"], histCountries: ["États Pontificaux", "Califat Abbaside"], currCountries: ["Iran", "Vatican"], desc: "Gouvernement dirigé par des autorités religieuses appliquant strictement les textes sacrés comme lois." },
-            { party: "Technocratie Militaire", leaders: ["Howard Scott", "Alexander Bogdanov", "Julius Caesar", "Atatürk"], culture: "Efficacité Scientifique", symbol: "atom", bgColors: ["#008080", "#101010", "#00ffff"], histCountries: ["Projet CyberSyn", "Rome antique"], currCountries: ["Singapour"], desc: "Gestion administrative confiée aux experts techniques sous le patronage disciplinaire de l'armée." },
-            { party: "Anarchisme", leaders: ["Nestor Makhno", "Piotr Kropotkine", "Mikhail Bakounine", "Louise Michel"], culture: "Autogestion Communale", symbol: "circle_a", bgColors: ["#111111", "#cc0000", "#333333"], histCountries: ["Catalogne 1936", "Makhnovchtchina"], currCountries: ["Zapatistes (Rojava)"], desc: "Société horizontale décentralisée rejetant toute autorité étatique au profit des coopératives." },
-            { party: "Écologisme Radical", leaders: ["Petra Kelly", "René Dumont", "Murray Bookchin", "Aldo Leopold"], culture: "Bio-Centrisme", symbol: "leaf", bgColors: ["#2cb67d", "#111111", "#88cc88"], histCountries: ["Mouvements Verts 70"], currCountries: ["Zones éco-communales"], desc: "Organisation sociale et politique réorientée autour de la durabilité environnementale stricte." },
-            { party: "Monarchie Constitutionnelle", leaders: ["Reine Victoria", "Meiji", "Juan Carlos I", "Guillaume III"], culture: "Coutume & Parlement", symbol: "shield", bgColors: ["#1d3557", "#f4a261", "#e76f51"], histCountries: ["Royaume de Grande-Bretagne"], currCountries: ["Royaume-Uni", "Japon"], desc: "Monarchie symbolique où le véritable pouvoir est exercé par un gouvernement représentatif." },
-            { party: "Strasserisme", leaders: ["Gregor Strasser", "Otto Strasser"], culture: "Social-Nationalisme", symbol: "hammer_sword", bgColors: ["#550000", "#111111", "#aaaaaa"], histCountries: ["Aile gauche NSDAP (1930)"], currCountries: ["Mouvements minoritaires"], desc: "Synthèse ultra-nationaliste et anti-capitaliste radicale prônant la collectivisation nationale." },
-            { party: "Corporatisme d'État", leaders: ["Getúlio Vargas", "Engelbert Dollfuss", "Antonio Salazar"], culture: "Syndicalisme National", symbol: "gear", bgColors: ["#333333", "#d4af37", "#003366"], histCountries: ["Estado Novo Brésil", "Autriche 1934"], currCountries: ["Comités corporatifs"], desc: "Organisation de la société par secteurs d'activités encadrés sous l'arbitrage central de l'État." },
-            { party: "Oligarchie Financière", leaders: ["Marcus Crassus", "Cosme de Médicis", "John D. Rockefeller"], culture: "Ploutocratie Unifiée", symbol: "coin", bgColors: ["#004b23", "#38b000", "#ccff00"], histCountries: ["République de Venise"], currCountries: ["Haute finance mondiale"], desc: "Régime où les détenteurs des plus grands capitaux concentrent l'influence politique réelle." },
-            { party: "Junte Militaire", leaders: ["Augusto Pinochet", "Idi Amin Dada", "Suharto", "Sani Abacha"], culture: "Ordre Martial", symbol: "sword", bgColors: ["#2b2d42", "#8d99ae", "#edf2f4"], histCountries: ["Chili (1973)", "Grèce des Colonels"], currCountries: ["Birmanie", "Mali"], desc: "Gouvernement d'exception directement aux mains du haut commandement des forces armées." }
+            { party: "National-Socialisme", leaders: ["Adolf Hitler", "Hermann Göring", "Heinrich Himmler", "Joseph Goebbels"], culture: "Autarcie & Totalitarisme", symbol: "swastika", bgColors: ["#cc0000", "#ffffff", "#000000"], histCountries: ["Troisième Reich"], currCountries: ["Aucun"] },
+            { party: "Fascisme", leaders: ["Benito Mussolini", "Francisco Franco", "Oswald Mosley"], culture: "Militarisme Radical", symbol: "fasces", bgColors: ["#800000", "#111111", "#dddddd"], histCountries: ["Italie fasciste"], currCountries: ["Érythrée"] },
+            { party: "Communisme", leaders: ["Vladimir Lénine", "Joseph Staline", "Mao Zedong", "Fidel Castro"], culture: "Collectivisme d'État", symbol: "hammer_sickle", bgColors: ["#cc0000", "#dd0000", "#ffcc00"], histCountries: ["Union Soviétique"], currCountries: ["Chine", "Cuba"] },
+            { party: "Démocratie Libérale", leaders: ["Franklin D. Roosevelt", "Winston Churchill", "Charles de Gaulle"], culture: "Libéralisme & Marché", symbol: "star", bgColors: ["#003399", "#ffffff", "#cc0000"], histCountries: ["IIIe République"], currCountries: ["États-Unis", "France"] },
+            { party: "Monarchie Absolue", leaders: ["Louis XIV", "Napoléon Ier", "Pierre Ier de Russie"], culture: "Tradition Impériale", symbol: "crown", bgColors: ["#4b0082", "#ffd700", "#ffffff"], histCountries: ["Royaume de France"], currCountries: ["Arabie Saoudite"] },
+            { party: "Social-Démocratie", leaders: ["Olof Palme", "Willy Brandt", "Nelson Mandela"], culture: "État-Providence", symbol: "rose", bgColors: ["#e63946", "#ffffff", "#1d3557"], histCountries: ["Suède (XXe)"], currCountries: ["Norvège"] },
+            { party: "Théocratie", leaders: ["Ruhollah Khomeini", "Innocent III", "Ali Khamenei"], culture: "Loi Sacrée", symbol: "cross", bgColors: ["#006633", "#ffffff", "#ffd700"], histCountries: ["États pontificaux"], currCountries: ["Iran", "Vatican"] },
+            { party: "Technocratie Militaire", leaders: ["Mustafa Kemal Atatürk", "Julius Caesar"], culture: "Efficacité & Ordre", symbol: "atom", bgColors: ["#008080", "#101010", "#00ffff"], histCountries: ["République Romaine"], currCountries: ["Singapour"] }
         ];
 
         let activeMode = "wheel";
@@ -391,11 +425,10 @@
         let currentCountry = {};
         let currentWheelOptions = [];
 
-        // COLLECTIONS
         let unlockedFlags = [];
         let unlockedLeaders = [];
 
-        // REMPLIR SELECTS FORMULAIRE MANUEL
+        // INITIALISATION SELECTS
         const selectPartyElem = document.getElementById('m-party');
         politicalData.forEach((p, idx) => {
             let opt = document.createElement('option'); opt.value = idx; opt.innerText = p.party;
@@ -458,10 +491,9 @@
             const area = parseFloat(document.getElementById('m-area').value) || 0;
             const pop = parseFloat(document.getElementById('m-pop').value) || 0;
             const gdpCap = parseFloat(document.getElementById('m-gdp-cap').value) || 0;
-            let armyRatio = parseFloat(document.getElementById('m-army').value) || 0.01;
-            if (armyRatio < 0.01) armyRatio = 0.01; if (armyRatio > 0.1) armyRatio = 0.1;
+            let armyRatio = parseFloat(document.getElementById('m-army').value) || 0.1;
+            if (armyRatio < 0.1) armyRatio = 0.1; if (armyRatio > 1.0) armyRatio = 1.0;
             const hdi = parseFloat(document.getElementById('m-hdi').value) || 0;
-            
             const partyIdx = document.getElementById('m-party').value;
             const partyObj = politicalData[partyIdx];
             const relIdx = document.getElementById('m-religion').value;
@@ -480,11 +512,12 @@
             };
 
             updateUIAndDescriptions();
-            drawStylizedFlag(partyObj, name);
+            setRealFlagAndPortrait(leader, partyObj, name);
+            fetchWikiData(leader, partyObj.party);
         }
 
-        const prefixes = ["Val", "Ar", "Bel", "Kael", "Nov", "Zor", "Ond", "Eld", "Mar", "Sol", "Vand", "Ostr"];
-        const suffixes = ["ia", "is", "oria", "gard", "onia", "vane", "terra", "mire", "stan", "reich", "grad"];
+        const prefixes = ["Val", "Ar", "Bel", "Kael", "Nov", "Zor", "Ond", "Eld", "Mar", "Sol"];
+        const suffixes = ["ia", "is", "oria", "gard", "onia", "vane", "terra", "mire", "stan"];
 
         function getStepKey() {
             return ["area", "pop", "armyRatio", "hdi", "gdpCap", "party", "religion", "leader", "culture", "final"][currentStepIndex];
@@ -503,10 +536,9 @@
                     options.push({ text: (val/1000000).toFixed(1) + "M hab.", value: val });
                 }
             } else if (stepKey === "armyRatio") {
-                // ARMÉE ENTRE 0.01 ET 0.1%
                 for (let i = 1; i <= 8; i++) {
-                    let ratio = (Math.random() * (0.1 - 0.01) + 0.01).toFixed(3);
-                    options.push({ text: ratio + "% Armée", value: parseFloat(ratio) });
+                    let ratio = (Math.random() * (1.0 - 0.1) + 0.1).toFixed(2);
+                    options.push({ text: ratio + "% Soldats", value: parseFloat(ratio) });
                 }
             } else if (stepKey === "hdi") {
                 for (let i = 1; i <= 8; i++) {
@@ -527,7 +559,7 @@
                 let partyObj = currentCountry.partyObj || politicalData[0];
                 partyObj.leaders.forEach(l => options.push({ text: l, value: l }));
             } else if (stepKey === "culture") {
-                let cultures = ["Autarcie & Discipline", "Progrès & Liberté", "Tradition Sacrée", "Militarisme Radical", "Coopération Ouvrière", "Technologie & Ordre"];
+                let cultures = ["Philosophie & Progrès", "Discipline & Ordre", "Sciences & Innovation", "Tradition Sacrée", "Industrialisation"];
                 cultures.forEach(c => options.push({ text: c, value: c }));
             } else if (stepKey === "final") {
                 for (let i = 1; i <= 8; i++) {
@@ -546,7 +578,6 @@
             }
         }
 
-        /* --- ROUE PETITE & RESTYLISÉE --- */
         function drawWheel(options) {
             const canvas = document.getElementById('wheel');
             const ctx = canvas.getContext('2d');
@@ -565,87 +596,43 @@
         }
 
         function updateStepWheel() {
-            const stepNames = ["Superficie", "Population", "Armée (0.01-0.1%)", "IDH", "PIB / hab.", "Parti / Régime", "Religion", "Leader", "Culture", "Nom & Drapeau IA"];
+            const stepNames = ["Superficie", "Population", "Armée (0.1-1%)", "IDH", "PIB / hab.", "Parti Politique", "Religion", "Leader", "Culture", "Nom & Drapeaux"];
             document.getElementById('wheelTitle').innerText = `Tourner pour : ${stepNames[currentStepIndex]}`;
             currentWheelOptions = getWheelOptionsForStep(getStepKey());
             drawWheel(currentWheelOptions);
         }
 
-        /* --- GENERATION DRAPEAUX STYLISÉS "IA" --- */
-        function drawStylizedFlag(partyObj, countryName) {
-            const canvas = document.getElementById('flagCanvas');
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            if (!partyObj) return;
+        // AFFICHAGE DU VRAI DRAPEAU HISTORIQUE ET DU PORTRAIT DU LEADER
+        function setRealFlagAndPortrait(leaderName, partyObj, countryName) {
+            const leaderData = leadersDatabase[leaderName] || { img: "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png", flag: "" };
+            
+            // Mise à jour de la photo du Leader
+            const lImg = document.getElementById('leaderPortraitImg');
+            lImg.src = leaderData.img;
 
-            let colors = partyObj.bgColors;
-            let styleType = Math.floor(Math.random() * 3);
+            // Affichage du Vrai Drapeau
+            const fCanvas = document.getElementById('flagCanvas');
+            const fImg = document.getElementById('flagImgDisplay');
 
-            if (styleType === 0) {
-                // Tricolore Vertical avec liserés
-                let w = canvas.width / 3;
-                for (let i = 0; i < 3; i++) { ctx.fillStyle = colors[i]; ctx.fillRect(i * w, 0, w, canvas.height); }
-            } else if (styleType === 1) {
-                // Rayures Horizontales et triangle latéral
-                let h = canvas.height / 3;
-                for (let i = 0; i < 3; i++) { ctx.fillStyle = colors[i]; ctx.fillRect(0, i * h, canvas.width, h); }
-                ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(100, canvas.height / 2); ctx.lineTo(0, canvas.height);
-                ctx.fillStyle = colors[0]; ctx.fill();
-            } else {
-                // Degradé complexe avec cercle central
-                let grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-                grad.addColorStop(0, colors[0]); grad.addColorStop(0.5, colors[1]); grad.addColorStop(1, colors[2]);
-                ctx.fillStyle = grad; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (leaderData.flag) {
+                fCanvas.style.display = 'none';
+                fImg.style.display = 'block';
+                fImg.src = leaderData.flag;
             }
 
-            // Symbole central
-            let cx = canvas.width / 2, cy = canvas.height / 2;
-            ctx.beginPath(); ctx.arc(cx, cy, 32, 0, Math.PI * 2);
-            ctx.fillStyle = "rgba(0,0,0,0.5)"; ctx.fill();
-            ctx.strokeStyle = "#ffd700"; ctx.lineWidth = 2; ctx.stroke();
-
-            ctx.fillStyle = "#ffd700"; ctx.font = "bold 32px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-            let sym = "★";
-            if (partyObj.symbol === "swastika") sym = "卐";
-            else if (partyObj.symbol === "fasces") sym = "🪓";
-            else if (partyObj.symbol === "hammer_sickle") sym = "☭";
-            else if (partyObj.symbol === "crown") sym = "👑";
-            else if (partyObj.symbol === "cross") sym = "✝️";
-            else if (partyObj.symbol === "atom") sym = "⚛️";
-            else if (partyObj.symbol === "circle_a") sym = "Ⓐ";
-            else if (partyObj.symbol === "leaf") sym = "🍃";
-            else if (partyObj.symbol === "shield") sym = "🛡️";
-            ctx.fillText(sym, cx, cy);
-
-            // Déblocage et enregistrement dans la collection
+            // Enregistrement dans les collections
             if (activeMode === 'wheel' && currentStepIndex === 0) {
-                let flagDataUrl = canvas.toDataURL();
                 if (!unlockedFlags.some(f => f.name === countryName)) {
-                    unlockedFlags.push({ name: countryName, party: partyObj.party, img: flagDataUrl });
+                    unlockedFlags.push({ name: countryName, party: partyObj.party, img: leaderData.flag });
                     updateCollectionsUI();
                 }
             }
+            registerLeaderUnlock(leaderName, partyObj.party, leaderData.img);
         }
 
-        function generateLeaderPortraitCanvas(leaderName) {
-            let c = document.createElement('canvas'); c.width = 100; c.height = 100;
-            let ctx = c.getContext('2d');
-            let grad = ctx.createRadialGradient(50, 50, 10, 50, 50, 50);
-            grad.addColorStop(0, '#3a3a4d'); grad.addColorStop(1, '#111116');
-            ctx.fillStyle = grad; ctx.fillRect(0, 0, 100, 100);
-            
-            ctx.beginPath(); ctx.arc(50, 40, 22, 0, Math.PI * 2); ctx.fillStyle = '#d4af37'; ctx.fill();
-            ctx.beginPath(); ctx.arc(50, 95, 35, 0, Math.PI * 2); ctx.fillStyle = '#7f5af0'; ctx.fill();
-            
-            ctx.fillStyle = "#fff"; ctx.font = "bold 20px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-            ctx.fillText(leaderName.charAt(0), 50, 40);
-            return c.toDataURL();
-        }
-
-        function registerLeaderUnlock(leaderName, partyName) {
+        function registerLeaderUnlock(leaderName, partyName, imgUrl) {
             if (!unlockedLeaders.some(l => l.name === leaderName)) {
-                let portraitUrl = generateLeaderPortraitCanvas(leaderName);
-                unlockedLeaders.push({ name: leaderName, party: partyName, img: portraitUrl });
+                unlockedLeaders.push({ name: leaderName, party: partyName, img: imgUrl });
                 updateCollectionsUI();
             }
         }
@@ -661,7 +648,7 @@
 
             const gridL = document.getElementById('gridLeaders'); gridL.innerHTML = "";
             unlockedLeaders.forEach(l => {
-                gridL.innerHTML += `<div class="collection-card"><img src="${l.img}"><div class="card-name">${l.name}</div><div class="card-sub">${l.party}</div></div>`;
+                gridL.innerHTML += `<div class="collection-card" onclick="fetchWikiData('${l.name}', '${l.party}')"><img src="${l.img}"><div class="card-name">${l.name}</div><div class="card-sub">${l.party}</div></div>`;
             });
         }
 
@@ -698,7 +685,12 @@
                     }
                 } else if (stepKey === "party") { currentCountry.partyObj = result.value; currentCountry.party = result.value.party; document.getElementById('c-party').innerText = result.text; }
                 else if (stepKey === "religion") { currentCountry.relObj = result.value; currentCountry.religion = result.value.name; document.getElementById('c-religion').innerText = result.text; }
-                else if (stepKey === "leader") { currentCountry.leader = result.value; document.getElementById('c-leader').innerText = result.text; }
+                else if (stepKey === "leader") {
+                    currentCountry.leader = result.value;
+                    document.getElementById('c-leader').innerText = result.text;
+                    let lData = leadersDatabase[result.value];
+                    if (lData) document.getElementById('leaderPortraitImg').src = lData.img;
+                }
                 else if (stepKey === "culture") { currentCountry.culture = result.value; document.getElementById('c-culture').innerText = result.text; }
                 else if (stepKey === "final") {
                     currentCountry.name = result.value;
@@ -709,10 +701,10 @@
                     currentCountry.simHist = pData.histCountries[0];
                     currentCountry.simCurr = pData.currCountries[0];
 
-                    drawStylizedFlag(pData, currentCountry.name);
-                    registerLeaderUnlock(currentCountry.leader, pData.party);
+                    setRealFlagAndPortrait(currentCountry.leader, pData, currentCountry.name);
                     updateUIAndDescriptions();
                     updateComparison();
+                    fetchWikiData(currentCountry.leader, pData.party);
                 }
 
                 wheel.style.transition = 'none'; wheel.style.transform = 'rotate(0deg)';
@@ -732,7 +724,34 @@
             autoSpin();
         }
 
-        /* --- DESCRIPTION HISTORIQUE & DESCRIPTION DES CRITÈRES --- */
+        async function fetchWikiData(leaderName, partyName) {
+            const wikiContainer = document.getElementById('wikiContent');
+            wikiContainer.innerHTML = `⌛ <i>Recherche Wikipédia pour <b>${leaderName}</b> et <b>${partyName}</b>...</i>`;
+
+            try {
+                const resLeader = await fetch(`https://fr.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(leaderName)}`);
+                let leaderBio = "Information non disponible sur Wikipédia.";
+                if (resLeader.ok) {
+                    const dataL = await resLeader.json();
+                    leaderBio = dataL.extract || leaderBio;
+                }
+
+                const resParty = await fetch(`https://fr.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(partyName)}`);
+                let partyBio = "Information non disponible.";
+                if (resParty.ok) {
+                    const dataP = await resParty.json();
+                    partyBio = dataP.extract || partyBio;
+                }
+
+                wikiContainer.innerHTML = 
+                    `👑 <b>Biographie Wikipédia (${leaderName}) :</b><br>${leaderBio}<br><br>` +
+                    `🏛️ <b>Régime Politique (${partyName}) :</b><br>${partyBio}`;
+
+            } catch (err) {
+                wikiContainer.innerHTML = `⚠️ Impossible de se connecter à l'API Wikipédia pour le moment.`;
+            }
+        }
+
         function updateUIAndDescriptions() {
             document.getElementById('c-area').innerText = currentCountry.area ? `${currentCountry.area.toLocaleString('fr-FR')} km²` : '-';
             document.getElementById('c-pop').innerText = currentCountry.pop ? `${(currentCountry.pop/1000000).toFixed(1)}M hab.` : '-';
@@ -748,20 +767,6 @@
             document.getElementById('c-sim-hist').innerText = currentCountry.simHist || '-';
             document.getElementById('c-sim-curr').innerText = currentCountry.simCurr || '-';
             document.getElementById('c-name').innerText = currentCountry.name || '???';
-
-            const pObj = currentCountry.partyObj;
-            const rObj = currentCountry.relObj;
-
-            if (pObj && rObj && currentCountry.name) {
-                document.getElementById('descContent').innerHTML = 
-                    `🏛️ <b>Analyse Globale de ${currentCountry.name} :</b><br><br>` +
-                    `👑 <b>Dirigeant (${currentCountry.leader}) :</b> Incarnation suprême du pouvoir, guidant le pays sous le régime de <strong>${pObj.party}</strong>.<br>` +
-                    `📜 <b>Régime Politique :</b> ${pObj.desc}<br>` +
-                    `🕊️ <b>Foi & Religion (${rObj.name}) :</b> ${rObj.desc}<br>` +
-                    `🎨 <b>Identité Culturelle :</b> Marquée par la doctrine "<em>${currentCountry.culture}</em>".<br>` +
-                    `⚔️ <b>Défense & Armée :</b> Mobilisation de <strong>${currentCountry.armyRatio}%</strong> de la population soit <strong>${(currentCountry.soldiers||0).toLocaleString('fr-FR')}</strong> soldats actifs.<br>` +
-                    `📊 <b>Niveau de Vie :</b> IDH établi à <strong>${currentCountry.hdi}</strong> avec une densité de <strong>${currentCountry.density} hab/km²</strong>.`;
-            }
         }
 
         function updateComparison() {
@@ -811,6 +816,3 @@
     </script>
 </body>
 </html>
-
-
-
